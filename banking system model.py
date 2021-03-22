@@ -32,10 +32,10 @@ class Bank:
 
 
 class Shadow_Bank:
-    def __init__(self, participation, shadow_bank_cash):
+    def __init__(self, participation, shadow_bank_cash, security):
         self.participation = participation
         self.shadow_bank_cash = shadow_bank_cash
-        self.security = participation - shadow_bank_cash
+        self.security = security
         ##### income and expense of shadow bank
 
 # introduction of Iranian Banks
