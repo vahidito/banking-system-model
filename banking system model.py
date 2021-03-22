@@ -42,10 +42,10 @@ class Bank:
 
 
 class Shadow_Bank:
-    def __init__(self, participation, shadow_bank_cash, security):
+    def __init__(self, participation, shadow_bank_cash):
         self.participation = participation
         self.shadow_bank_cash = shadow_bank_cash
-        self.security = security
+        self.security = participation - shadow_bank_cash
         ##### income and expense of shadow bank
 
 
@@ -84,7 +84,8 @@ bank_melli = Bank(500, 1000, 1000, 200, 900, 1500, 00, 0.1, 0.1, 0.1, 0.1)
 # introduction of Iranian Shadow Banks
 
 
-shadow1 = Shadow_Bank(100, 20, 80)
+shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20))
+
 
 
 
@@ -101,3 +102,4 @@ print(bank_melli.net_income)
 print(bank_melli.profit)
 print(bank_melli.pd)
 print(shadow1.participation)
+print(shadow1.shadow_bank_cash)
