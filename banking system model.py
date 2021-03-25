@@ -20,8 +20,8 @@ rfree = 0.1
 
 
 class Bank:
-    def __init__(self, bank_cash, lend_to_banks, lend_to_loans, bank_sec, deposits, borrow_from_banks, equity, CAR,
-                 provision_per, phi, zeta , landa_min, xs, xbl, xl):
+    def __init__(self, bank_cash, lend_to_banks, lend_to_loans, bank_sec, deposits, borrow_from_banks, equity, alpha_min,
+                 provision_per, phi, zeta, car, xs, xbl, xl):
         # balance sheet
         self.bank_cash = bank_cash
         self.lend_to_banks = lend_to_banks
@@ -30,14 +30,14 @@ class Bank:
         self.deposits = deposits
         self.borrow_from_banks = borrow_from_banks
         self.equity = equity
-        self.CAR = CAR
+        self.alpha_min = alpha_min
         self.provision_per = provision_per
         self.zeta = zeta
         self.total_assets = bank_cash + lend_to_banks + lend_to_loans + bank_sec
         self.xs = xs
         self.xbl = xbl
         self.xl = xl
-        self.landa_min = landa_min
+        self.car = car
 
         ##### income and expense of bank
         pd = 0.1
@@ -102,8 +102,8 @@ shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20))
 c = np.array(
     [-rfree, -ret_sec_bank, ((rfree * bank_melli.borrow_from_banks) / (1 - bank_melli.zeta * bank_melli.pd)), 0, 0, 0, 0])
 
-A_ub = np.array([[(-1 + bank_melli.landa_min * bank_melli.xbl), (-1 + bank_melli.landa_min * bank_melli.xs), 1, (-1 + bank_melli.landa_min * bank_melli.xl), -1, 1, 0], [0, 0, 0, 0, 0 ,0 ,0]])
-b_ub = np.array([0, 0])
+A_ub = np.array([[(-1 + bank_melli.car * bank_melli.xbl), (-1 + bank_melli.car * bank_melli.xs), 1, (-1 + bank_melli.car * bank_melli.xl), -1, 1, 0], [-1, 0, (bank_melli.alpha_min + bank_melli.provision_per), 0, -1 ,(bank_melli.alpha_min + bank_melli.provision_per) ,0], [0, 0, 0, 0, -1 ,(bank_melli.alpha_min + bank_melli.provision_per) ,0]])
+b_ub = np.array([0, 0, 0])
 
 #### the first bound is structural balance sheet equation
 #### the second one is based on this assumtion that  half of the bank’s assets is invested in loans
