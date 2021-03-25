@@ -50,10 +50,12 @@ class Bank:
 
 
 class Shadow_Bank:
-    def __init__(self, participation, shadow_bank_cash):
+    def __init__(self, participation, shadow_bank_cash, s_alpha, s_provision):
         self.participation = participation
         self.shadow_bank_cash = shadow_bank_cash
         self.security = participation - shadow_bank_cash
+        self.s_alpha = s_alpha
+        self.s_provision = s_provision
         ##### income and expense of shadow bank
 
 
@@ -92,12 +94,12 @@ bank_melli = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1 , 0.0
 # introduction of Iranian Shadow Banks
 
 
-shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20))
+shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20),0.1,0.3 )
 
 #####################################################
 # 1-BL 2-S 3-BB 4-L 5-C 6-D 7-E
 # optimixation phase
-### objective function
+### objective function of banks
 
 c = np.array(
     [-rfree, -ret_sec_bank, ((rfree * bank_melli.borrow_from_banks) / (1 - bank_melli.zeta * bank_melli.pd)), 0, 0, 0, 0])
@@ -121,13 +123,33 @@ x6_bounds = (0, None)
 
 bounds = [x0_bounds, x1_bounds, x2_bounds, x3_bounds, x4_bounds, x5_bounds, x6_bounds]
 result = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds)
-print(result.x)
+
 aaa = [result.x[2] , result.x[5] , result.x[6]]
 bbb = [result.x[0] , result.x[1] , result.x[3] , result.x[4]]
-print(sum(aaa))
-print(sum(bbb))
-print(result.x[1])
-print(sum(result.x))
+
+########################################################
+# optimixation phase
+### objective function of shadow banks
+# 1- security 2-cash 3-participation
+
+c_s = np.array([-ret_sec_shbank, 0, 0])
+
+A_ub_s = np.array([[0, -1, (shadow1.s_alpha+shadow1.s_provision)]])
+b_ub_s = np.array([0])
+
+
+#### the first bound is structural balance sheet equation
+
+A_eq_s = np.array([[1, 1, -1]])
+b_eq_s = np.array([0])
+
+x0_bounds_s = (0, None)
+x1_bounds_s = (0, None)
+x2_bounds_s = (0, None)
+
+bounds_s = [x0_bounds_s, x1_bounds_s, x2_bounds_s]
+result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
+print(result_s.x)
 
 ########################################################
 # simulations
@@ -138,3 +160,5 @@ print(bank_melli.net_income)
 print(bank_melli.profit)
 print(bank_melli.pd)
 print(bank_melli.pd1)
+
+
