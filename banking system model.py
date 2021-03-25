@@ -59,7 +59,7 @@ class Shadow_Bank:
     def __init__(self, participation, shadow_bank_cash, s_alpha, s_provision):
         self.participation = participation
         self.shadow_bank_cash = shadow_bank_cash
-        self.security = participation - shadow_bank_cash
+        self.security = security
         self.s_alpha = s_alpha
         self.s_provision = s_provision
         ##### income and expense of shadow bank
@@ -67,17 +67,17 @@ class Shadow_Bank:
 
 
 #####################################################
-# 1-BL 2-S 3-BB 4-L 5-C 6-D 7-E
+# 1-BL 2-S 3-BB 4-L 5-C
 # optimixation phase
 ### objective function of banks
 def optimize_bank(mmm):
-    c = np.array([-rfree, -mmm.ret_on_sec, ((rfree * mmm.borrow_from_banks) / (1 - mmm.zeta * mmm.pd)), 0, 0, 0, 0])
-    A_ub = np.array([[(-1 + mmm.car * mmm.xbl), (-1 + mmm.car * mmm.xs), 1, (-1 + mmm.car * mmm.xl), -1, 1, 0],
-                     [-1, 0, (mmm.alpha_min + mmm.provision_per), 0, -1, (mmm.alpha_min + mmm.provision_per), 0],
-                     [0, 0, 0, 0, -1, (mmm.alpha_min + mmm.provision_per), 0]])
+    c = np.array([-rfree, -mmm.ret_on_sec, ((rfree * mmm.borrow_from_banks) / (1 - mmm.zeta * mmm.pd)), 0, 0])
+    A_ub = np.array([[(-1 + mmm.car * mmm.xbl), (-1 + mmm.car * mmm.xs), 1, (-1 + mmm.car * mmm.xl), -1],
+                     [-1, 0, (mmm.alpha_min + mmm.provision_per), 0, -1],
+                     [0, 0, 0, 0, -1]])
     #### the first bound is structural balance sheet equation
     #### the second one is based on this assumtion that  half of the bank’s assets is invested in loans
-    b_ub = np.array([0, 0, 0])
+    b_ub = np.array([-mmm.deposits, -(mmm.alpha_min + mmm.provision_per), -(mmm.alpha_min + mmm.provision_per)])
     A_eq = np.array([[1, 1, -1, 1, 1, -1, -1], [0, 0, -1, 2, 0, -1, -1], [1, 1, 0, 1, 1, 0, 0]])
     b_eq = np.array([0, 0, mmm.total_assets])
     x0_bounds = (0, None)
@@ -98,13 +98,14 @@ def optimize_bank(mmm):
     mmm.deposits = result.x[5]
     mmm.borrow_from_banks = result.x[2]
     mmm.equity = result.x[6]
-    mmm.total_assets = mmm.bank_cash + mmm.lend_to_banks + mmm.lend_to_loans + mmm.bank_sec
-    mmm.ret_on_sec = np.random.normal(ret_sec_bank, ret_sec_bank_sigma)
 
-    mmm.net_income = (ret_sec_bank * mmm.bank_sec) + (rfree * mmm.lend_to_banks) - (
-            (rfree * mmm.borrow_from_banks) / (1 - mmm.zeta * pd))
-    mmm.sigma = phi * (mmm.deposits + mmm.equity)
-    mmm.profit = float(np.random.normal(mmm.net_income, mmm.sigma, 1))
+    mmm.total_assets = mmm.bank_cash + mmm.lend_to_banks + mmm.lend_to_loans + mmm.bank_sec
+    # mmm.ret_on_sec = np.random.normal(ret_sec_bank, ret_sec_bank_sigma)
+    #
+    # mmm.net_income = (ret_sec_bank * mmm.bank_sec) + (rfree * mmm.lend_to_banks) - (
+    #         (rfree * mmm.borrow_from_banks) / (1 - mmm.zeta * pd))
+    # mmm.sigma = phi * (mmm.deposits + mmm.equity)
+    # mmm.profit = np.random.normal(mmm.net_income, mmm.sigma, 1)
     # mmm.pd = norm.cdf((-mmm.net_income - mmm.equity) / (mmm.sigma))
 
 
