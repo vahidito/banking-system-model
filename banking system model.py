@@ -48,8 +48,8 @@ class Bank:
         ##### income and expense of bank
         pd = 0.1
         self.net_income = (ret_sec_bank * self.bank_sec) + (rfree * self.lend_to_banks) - (
-                (rfree * self.borrow_from_banks) / (1 - zeta * pd))
-        self.sigma = phi * (deposits + equity)
+                (rfree * self.borrow_from_banks) / (1 - self.zeta * pd))
+        self.sigma = phi * (self.deposits + self.equity)
         self.profit = float(np.random.normal(self.net_income, self.sigma, 1))
         # self.pd = norm.cdf((-self.net_income - self.equity) / (self.sigma))
         self.pd = np.random.beta(1, 20)
@@ -91,7 +91,21 @@ def optimize_bank(mmm):
     result = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds)
     aaa = [result.x[2], result.x[5], result.x[6]]
     bbb = [result.x[0], result.x[1], result.x[3], result.x[4]]
+    mmm.bank_cash = result.x[4]
+    mmm.lend_to_banks = result.x[0]
+    mmm.lend_to_loans = result.x[3]
+    mmm.bank_sec = result.x[1]
+    mmm.deposits = result.x[5]
+    mmm.borrow_from_banks = result.x[2]
+    mmm.equity = result.x[6]
+    mmm.total_assets = mmm.bank_cash + mmm.lend_to_banks + mmm.lend_to_loans + mmm.bank_sec
+    mmm.ret_on_sec = np.random.normal(ret_sec_bank, ret_sec_bank_sigma)
 
+    mmm.net_income = (ret_sec_bank * mmm.bank_sec) + (rfree * mmm.lend_to_banks) - (
+            (rfree * mmm.borrow_from_banks) / (1 - mmm.zeta * pd))
+    mmm.sigma = phi * (mmm.deposits + mmm.equity)
+    mmm.profit = float(np.random.normal(mmm.net_income, mmm.sigma, 1))
+    # mmm.pd = norm.cdf((-mmm.net_income - mmm.equity) / (mmm.sigma))
 
 
 ########################################################
@@ -147,15 +161,41 @@ bank_melal = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07
 
 shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20), 0.1, 0.1)
 
+###############################################################
+
 
 ###############################################################
 #### start of simulation
-for i in range(0,n_sim):
-    optimize_bank(bank_melli)
 
+#for i in range(0,n_sim):
 
-
-
+    # optimize_bank(bank_melli)
+    # optimize_bank(bank_seppah)
+    # optimize_bank(bank_tosesaderat)
+    # optimize_bank(bank_maskan)
+    # optimize_bank(bank_sanatmadan)
+    # optimize_bank(bank_keshavarzi)
+    # optimize_bank(bank_tosetavon)
+    # optimize_bank(bank_post)
+    # optimize_bank(bank_eghtesadnovin)
+    # optimize_bank(bank_parsian)
+    # optimize_bank(bank_karafarin)
+    # optimize_bank(bank_saman)
+    # optimize_bank(bank_sina)
+    # optimize_bank(bank_khavarmiane)
+    # optimize_bank(bank_shahr)
+    # optimize_bank(bank_dey)
+    # optimize_bank(bank_saderat)
+    # optimize_bank(bank_tejarat)
+    # optimize_bank(bank_mellat)
+    # optimize_bank(bank_refah)
+    # optimize_bank(bank_ayandeh)
+    # optimize_bank(bank_gardeshgary)
+    # optimize_bank(bank_iranzamin)
+    # optimize_bank(bank_sarmaye)
+    # optimize_bank(bank_pasargad)
+    # optimize_bank(bank_melal)
+optimize_bank(bank_melli)
 ###############################################################
 # Equilibrium in interBank market
 
@@ -174,3 +214,10 @@ else:
 
 rfree_vector.append(f'{rfree}')
 print(rfree_vector)
+
+
+
+
+
+
+## test
