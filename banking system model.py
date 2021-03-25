@@ -32,10 +32,12 @@ class Bank:
         self.equity = equity
         self.CAR = CAR
         self.provision_per = provision_per
+        self.zeta = zeta
+
         ##### income and expense of bank
         pd = 0.1
         self.net_income = (ret_sec_bank * self.bank_sec) + (rfree * self.lend_to_banks) - (
-                    (rfree * self.borrow_from_banks) / (1 - zeta * pd))
+                (rfree * self.borrow_from_banks) / (1 - zeta * pd))
         self.sigma = phi * (deposits + equity)
         self.profit = float(np.random.normal(self.net_income, self.sigma, 1))
         self.pd = norm.cdf((-self.net_income - self.equity) / (self.sigma))
@@ -86,28 +88,36 @@ bank_melli = Bank(500, 1000, 1000, 200, 900, 1500, 00, 0.1, 0.1, 0.1, 0.1)
 
 shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20))
 
-
-
-
 #####################################################
 # 1-BL 2-S 3-BB 4-L 5-C 6-D 7-E
 # optimixation phase
-c = np.array([rfree, ret_sec_bank,(rfree * self.borrow_from_banks) / (1 - zeta * pd)) , 0.0])
-A_ub = np.array([[1.0, -1.0, -3.0, 0.0], [-2.0, 3.0, 7.0, -3.0]])
-b_ub = np.array([5.0, -10.0])
-A_eq = np.array([[2.0, 8.0, 1.0, 0.0], [4.0, 4.0, 0.0, 1.0]])
-b_eq = np.array([60.0, 60.0])
+### objective function
+
+c = np.array(
+    [-rfree, -ret_sec_bank, ((-rfree * bank_melli.borrow_from_banks) / (1 - bank_melli.zeta * bank_melli.pd)), 0, 0, 0, 0])
+
+A_ub = np.array([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0 ,0 ,0]])
+b_ub = np.array([0, 0])
+
+#### the first bound is structural balance sheet equation
+#### the second one is based on this assumtion that  half of the bank’s assets is invested in loans
+
+A_eq = np.array([[1, 1, -1, 1, 1, -1, -1], [0, 0, -1, 2, 0, -1, -1]])
+b_eq = np.array([0, 0])
+
 x0_bounds = (0, None)
-x1_bounds = (0, 5.0)
-x2_bounds = (-np.inf, 0.5)  # +/- np.inf can be used instead of None
-x3_bounds = (-3.0, None)
-bounds = [x0_bounds, x1_bounds, x2_bounds, x3_bounds]
+x1_bounds = (0, None)
+x2_bounds = (0, None)
+x3_bounds = (0, None)
+x4_bounds = (0, None)
+x5_bounds = (0, None)
+x6_bounds = (0, None)
+
+bounds = [x0_bounds, x1_bounds, x2_bounds, x3_bounds, x4_bounds, x5_bounds, x6_bounds]
 result = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds)
 print(result.x)
-
-
-
-
+print(result.x[1])
+print(sum(result.x))
 
 ########################################################
 # simulations
