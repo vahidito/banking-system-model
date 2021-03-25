@@ -11,8 +11,12 @@ from scipy.optimize import linprog
 ### global variables
 
 ret_sec_bank = 0.1
+ret_sec_bank_sigma = 0.02
 ret_sec_shbank = 0.2
 rfree = 0.1
+rfree_min = 0.05
+rfree_max = 0.4
+rfree_vector = [f'{rfree}']
 
 
 ########################################################################
@@ -39,6 +43,7 @@ class Bank:
         self.xbl = xbl
         self.xl = xl
         self.car = car
+        self.ret_on_sec = np.random.normal(ret_sec_bank, ret_sec_bank_sigma)
 
         ##### income and expense of bank
         pd = 0.1
@@ -46,8 +51,9 @@ class Bank:
                 (rfree * self.borrow_from_banks) / (1 - zeta * pd))
         self.sigma = phi * (deposits + equity)
         self.profit = float(np.random.normal(self.net_income, self.sigma, 1))
-        self.pd = norm.cdf((-self.net_income - self.equity) / (self.sigma))
-        self.pd1 = norm.ppf((-self.net_income - self.equity) / (self.sigma))
+        #self.pd = norm.cdf((-self.net_income - self.equity) / (self.sigma))
+        self.pd = np.random.beta(1,20)
+
 
 
 class Shadow_Bank:
@@ -63,8 +69,8 @@ class Shadow_Bank:
 ###############################################################
 # introduction of Iranian Banks
 
-bank_melli = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
-bank_seppah = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
+bank_melli = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.4, 0.07, 0.05, 0.05, 0.05)
+bank_seppah = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.4, 0.07, 0.05, 0.05, 0.05)
 bank_tosesaderat = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
 bank_maskan = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
 bank_sanatmadan = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
@@ -102,7 +108,7 @@ shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20), 0.1, 0.1)
 ### objective function of banks
 
 c = np.array(
-    [-rfree, -ret_sec_bank, ((rfree * bank_melli.borrow_from_banks) / (1 - bank_melli.zeta * bank_melli.pd)), 0, 0, 0,
+    [-rfree, -bank_melli.ret_on_sec, ((rfree * bank_melli.borrow_from_banks) / (1 - bank_melli.zeta * bank_melli.pd)), 0, 0, 0,
      0])
 
 A_ub = np.array([[(-1 + bank_melli.car * bank_melli.xbl), (-1 + bank_melli.car * bank_melli.xs), 1,
@@ -155,22 +161,23 @@ bounds_s = [x0_bounds_s, x1_bounds_s, x2_bounds_s]
 result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
 print(result_s.x)
 
-########################################################
-# simulations
-
-
-#######################################################
-print(bank_melli.net_income)
-print(bank_melli.profit)
-print(bank_melli.pd)
-print(bank_melli.pd1)
-
 #############################################################
+
 # Equilibrium in interBank market
 
 demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks +bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks +bank_melal.borrow_from_banks
-
+supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks +bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks +bank_melal.lend_to_banks
 
 print(demand_of_banks)
+print(supply_of_banks)
 
-supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks +bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks +bank_melal.lend_to_banks
+if demand_of_banks > supply_of_banks :
+    rfree = (rfree + rfree_max)/2
+elif demand_of_banks < supply_of_banks :
+    rfree = (rfree + rfree_min) / 2
+else:
+    rfree = rfree
+
+rfree_vector.append(f'{rfree}')
+print(rfree_vector)
+
