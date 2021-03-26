@@ -24,12 +24,12 @@ a = aaa[1]
 print(type(a))
 
 
-class What:
-    def __init__(self, *args, **kwargs):
-
-        pass
-
-
-whatever = [What() for _ in range(200)]
-obg = whatever[10]
-print(obg)
+# class What:
+#     def __init__(self, *args, **kwargs):
+#
+#         pass
+#
+#
+# whatever = [What() for _ in range(200)]
+# obg = whatever[10]
+# print(obg)
