@@ -212,3 +212,14 @@ plt.plot(rfree_plot)
 plt.show()
 ## test
  ##### dynamics of model
+# the name of bank which is source of the shock
+www = bank_melli
+sig = 0.01
+shock = sig * (www.deposits + www.borrow_from_banks)
+
+if shock <= www.bank_cash:
+    landa = sig * (www.deposits + www.borrow_from_banks)
+else:
+    landa = 0
+
+if landa => 0 :
