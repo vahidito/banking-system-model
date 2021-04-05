@@ -220,27 +220,30 @@ plt.show()
 www = bank_melli
 sig = 0.01
 shock = sig * (www.deposits + www.borrow_from_banks)
-def dynamic_bank (www):
+
+
+def dynamic_bank(www):
     if shock <= www.bank_cash:
         landa = sig * (www.deposits + www.borrow_from_banks)
         www.equity = www.equity - (www.bank_cash - landa)
         www.bank_cash = www.bank_cash - landa
-    elif (www.bank_cash + www.lend_to_banks) = > shock = > www.bank_cash and www.lend_to_banks != 0:
+    elif www.bank_cash + www.lend_to_banks >= shock >= www.bank_cash and www.lend_to_banks != 0:
         www.equity = www.equity - www.bank_cash
         www.bank_cash = 0
         www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) = > shock = > (www.bank_cash + www.lend_to_banks):
+    elif www.bank_cash + www.lend_to_banks + www.bank_sec >= shock  >= (www.bank_cash + www.lend_to_banks):
         delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
         www.bank_cash = 0
         www.equity = www.equity - www.bank_cash
         www.lend_to_banks = 0
         www.bank_sec = www.bank_sec - delta
         www.stock = www.bank_sec / p_market
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
         www.bankrupt = True
 
+    #### equilibrium in security market
 
-#### equilibrium in security market
- stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
 
-p_market =
+stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
+
+# p_market =
