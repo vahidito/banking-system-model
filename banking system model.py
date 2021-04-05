@@ -17,7 +17,7 @@ rfree = 0.18
 rfree_min = 0.1
 rfree_max = 0.25
 rfree_vector = [f'{rfree}']
-
+p_market = 1000
 
 ########################################################################
 # defining the agents: banks, shadow banks, savers, loans
@@ -45,6 +45,8 @@ class Bank:
         self.xl = xl
         self.car = car
         self.ret_on_sec = np.random.normal(ret_sec_bank, ret_sec_bank_sigma)
+        self.stock = bank_sec / p_market
+
 
         ##### income and expense of bank
         pd = 0.1
@@ -206,12 +208,12 @@ for i in range(0, 20):
 
 # print(rfree_vector)
 rfree_plot = []
-for i in range(0,len(rfree_vector)):
+for i in range(0, len(rfree_vector)):
     rfree_plot.append([float(rfree_vector[i])])
 plt.plot(rfree_plot)
 plt.show()
 ## test
- ##### dynamics of model
+##### dynamics of model
 # the name of bank which is source of the shock
 www = bank_melli
 sig = 0.01
@@ -219,7 +221,10 @@ shock = sig * (www.deposits + www.borrow_from_banks)
 
 if shock <= www.bank_cash:
     landa = sig * (www.deposits + www.borrow_from_banks)
-else:
-    landa = 0
+    www.equity = www.equity - (www.bank_cash - landa)
+    www.bank_cash = www.bank_cash - landa
+elif (www.bank_cash + www.lend_to_banks) <= shock <= www.bank_cash:
+    www.bank_cash = 0
 
-if landa => 0 :
+
+
