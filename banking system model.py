@@ -28,7 +28,6 @@ p_market = intrinsic_value + np.random.normal(0)
 class Bank:
     def __init__(self, bank_cash, lend_to_banks, lend_to_loans, bank_sec, deposits, borrow_from_banks, equity,
                  alpha_min, provision_per, phi, zeta, car, xs, xbl, xl):
-        # balance sheet
         self.bankrupt = False
         self.bank_cash = bank_cash
         self.lend_to_banks = lend_to_banks
@@ -102,6 +101,24 @@ bank_sarmaye = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.
 bank_pasargad = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
 bank_melal = Bank(500, 1000, 1000, 200, 700, 1500, 500, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05)
 
+# introduction of Iranian Shadow Banks
+
+shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.01, 0.01)
+shadow2 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.3, 0.3)
+shadow3 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.91, 0.01)
+shadow4 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow5 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow6 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow7 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow8 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow9 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow10 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow11 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow12 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow13 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow14 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow15 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+
 
 #####################################################
 # 1-BL 2-S 3-BB 4-L 5-C
@@ -139,102 +156,103 @@ def optimize_bank(mmm):
     ########################################################
     # optimixation phase
     ### objective function of shadow banks
-    # 1- security 2-cash 3-participation
-    def optimize_shadow_bank(nnn):
-        c_s = np.array([-ret_sec_shbank, 0, 0])
-        ####  bound is structural balance sheet equation
-        A_ub_s = np.array([[0, -1, (nnn.s_alpha + nnn.s_provision)]])
-        b_ub_s = np.array([0])
-        A_eq_s = np.array([[1, 1, -1], [0, 0, 1]])
-        b_eq_s = np.array([0, nnn.participation])
-        x0_bounds_s = (0, None)
-        x1_bounds_s = (0, None)
-        x2_bounds_s = (0, None)
-        bounds_s = [x0_bounds_s, x1_bounds_s, x2_bounds_s]
-        result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
-        # print(result_s.x)
+    # 1- security 2-cash
+
+
+def optimize_shadow_bank(nnn):
+    c_s = np.array([(-ret_sec_shbank), 0])
+    A_ub_s = np.array([[0, -1]])
+    b_ub_s = np.array([-(nnn.s_alpha + nnn.s_provision) * nnn.participation])
+    A_eq_s = np.array([[1, 1]])
+    b_eq_s = np.array([nnn.participation])
+    x0_bounds_s = (0, None)
+    x1_bounds_s = (0, None)
+
+    bounds_s = [x0_bounds_s, x1_bounds_s]
+    result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
+    nnn.shadow_bank_cash = result_s.x[1]
+    nnn.security = result_s.x[0]
+    print(result_s.x)
 
     ###############################################################
-    # introduction of Iranian Shadow Banks
-
-    shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow2 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow3 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow4 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow5 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow6 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow7 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow8 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow9 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow10 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow12 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow13 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow14 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-    shadow15 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
 
     ###############################################################
 
 
-for i in range(0, 20):
-    optimize_bank(bank_melli)
-    optimize_bank(bank_seppah)
-    optimize_bank(bank_tosesaderat)
-    optimize_bank(bank_maskan)
-    optimize_bank(bank_sanatmadan)
-    optimize_bank(bank_keshavarzi)
-    optimize_bank(bank_tosetavon)
-    optimize_bank(bank_post)
-    optimize_bank(bank_eghtesadnovin)
-    optimize_bank(bank_parsian)
-    optimize_bank(bank_karafarin)
-    optimize_bank(bank_saman)
-    optimize_bank(bank_sina)
-    optimize_bank(bank_khavarmiane)
-    optimize_bank(bank_shahr)
-    optimize_bank(bank_dey)
-    optimize_bank(bank_saderat)
-    optimize_bank(bank_tejarat)
-    optimize_bank(bank_mellat)
-    optimize_bank(bank_refah)
-    optimize_bank(bank_ayandeh)
-    optimize_bank(bank_gardeshgary)
-    optimize_bank(bank_iranzamin)
-    optimize_bank(bank_sarmaye)
-    optimize_bank(bank_pasargad)
-    optimize_bank(bank_melal)
-    ###############################################################
-    #### start of simulation
-    # bank_melli_equity = [f'{bank_melli.equity}']
-    # for i in range(0, 1):
-    #     optimize_bank(bank_melli)
-    #     bank_melli_equity.append(f'{bank_melli.equity}')
-    # print(bank_melli_equity)
-    demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks + bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks + bank_melal.borrow_from_banks
-    supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks + bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks + bank_melal.lend_to_banks
-    # print(demand_of_banks)
-    # print(supply_of_banks)
-    if demand_of_banks > supply_of_banks:
-        rfree = (rfree + rfree_max) / 2
-    elif demand_of_banks < supply_of_banks:
-        rfree = (rfree + rfree_min) / 2
-    else:
-        rfree = rfree
+optimize_bank(bank_melli)
+optimize_bank(bank_seppah)
+optimize_bank(bank_tosesaderat)
+optimize_bank(bank_maskan)
+optimize_bank(bank_sanatmadan)
+optimize_bank(bank_keshavarzi)
+optimize_bank(bank_tosetavon)
+optimize_bank(bank_post)
+optimize_bank(bank_eghtesadnovin)
+optimize_bank(bank_parsian)
+optimize_bank(bank_karafarin)
+optimize_bank(bank_saman)
+optimize_bank(bank_sina)
+optimize_bank(bank_khavarmiane)
+optimize_bank(bank_shahr)
+optimize_bank(bank_dey)
+optimize_bank(bank_saderat)
+optimize_bank(bank_tejarat)
+optimize_bank(bank_mellat)
+optimize_bank(bank_refah)
+optimize_bank(bank_ayandeh)
+optimize_bank(bank_gardeshgary)
+optimize_bank(bank_iranzamin)
+optimize_bank(bank_sarmaye)
+optimize_bank(bank_pasargad)
+optimize_bank(bank_melal)
 
+optimize_shadow_bank(shadow1)
+optimize_shadow_bank(shadow2)
+optimize_shadow_bank(shadow3)
+optimize_shadow_bank(shadow4)
+optimize_shadow_bank(shadow5)
+optimize_shadow_bank(shadow6)
+optimize_shadow_bank(shadow7)
+optimize_shadow_bank(shadow8)
+optimize_shadow_bank(shadow9)
+optimize_shadow_bank(shadow10)
+optimize_shadow_bank(shadow11)
+optimize_shadow_bank(shadow12)
+optimize_shadow_bank(shadow13)
+optimize_shadow_bank(shadow14)
+optimize_shadow_bank(shadow15)
+
+#### equilibrium in IBLM market
+
+demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks + bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks + bank_melal.borrow_from_banks
+supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks + bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks + bank_melal.lend_to_banks
+
+if demand_of_banks > supply_of_banks:
+    rfree = (rfree + rfree_max) / 2
+elif demand_of_banks < supply_of_banks:
+    rfree = (rfree + rfree_min) / 2
+else:
+    rfree = rfree
     rfree_vector.append(f'{rfree}')
 
-# print(rfree_vector)
-rfree_plot = []
-for i in range(0, len(rfree_vector)):
-    rfree_plot.append([float(rfree_vector[i])])
-plt.plot(rfree_plot)
-plt.show()
-## test
+#### equilibrium in security market
+stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
+
+# rfree_plot = []
+# for i in range(0, len(rfree_vector)):
+#     rfree_plot.append([float(rfree_vector[i])])
+# plt.plot(rfree_plot)
+# plt.show()
+
+
 ##### dynamics of model
 # the name of bank which is source of the shock
-www = bank_melli
+shock_hit = bank_melli
 sig = 0.01
-shock = sig * (www.deposits + www.borrow_from_banks)
-def dynamic_bank (www):
+shock = sig * (shock_hit.deposits + shock_hit.borrow_from_banks)
+
+
+def dynamic_bank(www):
     if shock <= www.bank_cash:
         landa = sig * (www.deposits + www.borrow_from_banks)
         www.equity = www.equity - (www.bank_cash - landa)
@@ -243,18 +261,12 @@ def dynamic_bank (www):
         www.equity = www.equity - www.bank_cash
         www.bank_cash = 0
         www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock  >= (www.bank_cash + www.lend_to_banks):
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
         delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
         www.bank_cash = 0
         www.equity = www.equity - www.bank_cash
         www.lend_to_banks = 0
         www.bank_sec = www.bank_sec - delta
         www.stock = www.bank_sec / p_market
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock :
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
         www.bankrupt = True
-
-
-#### equilibrium in security market
-stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
-
-#p_market =
