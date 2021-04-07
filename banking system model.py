@@ -160,7 +160,7 @@ def optimize_bank(mmm):
 
 
 def optimize_shadow_bank(nnn):
-    c_s = np.array([(-ret_sec_shbank), 0])
+    c_s = np.array([np.random.normal(-ret_sec_shbank,0.01), 0])
     A_ub_s = np.array([[0, -1]])
     b_ub_s = np.array([-(nnn.s_alpha + nnn.s_provision) * nnn.participation])
     A_eq_s = np.array([[1, 1]])
@@ -171,8 +171,12 @@ def optimize_shadow_bank(nnn):
     bounds_s = [x0_bounds_s, x1_bounds_s]
     result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
     nnn.shadow_bank_cash = result_s.x[1]
+    nnn.security_old = nnn.security
     nnn.security = result_s.x[0]
+    nnn.security_sale = nnn.security - nnn.security_old
     print(result_s.x)
+    print(nnn.security)
+    print(nnn.security_old)
 
     ###############################################################
 
