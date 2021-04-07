@@ -158,6 +158,19 @@ def optimize_bank(mmm):
     # introduction of Iranian Shadow Banks
 
     shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow2 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow3 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow4 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow5 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow6 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow7 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow8 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow9 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow10 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow12 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow13 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow14 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+    shadow15 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
 
     ###############################################################
 
@@ -226,11 +239,11 @@ def dynamic_bank (www):
         landa = sig * (www.deposits + www.borrow_from_banks)
         www.equity = www.equity - (www.bank_cash - landa)
         www.bank_cash = www.bank_cash - landa
-    elif (www.bank_cash + www.lend_to_banks) = > shock = > www.bank_cash and www.lend_to_banks != 0:
+    elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash and www.lend_to_banks != 0:
         www.equity = www.equity - www.bank_cash
         www.bank_cash = 0
         www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) = > shock = > (www.bank_cash + www.lend_to_banks):
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock  >= (www.bank_cash + www.lend_to_banks):
         delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
         www.bank_cash = 0
         www.equity = www.equity - www.bank_cash
@@ -244,4 +257,4 @@ def dynamic_bank (www):
 #### equilibrium in security market
  stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
 
-p_market =
+#p_market =
