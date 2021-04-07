@@ -18,11 +18,11 @@ rfree_min = 0.1
 rfree_max = 0.25
 rfree_vector = [f'{rfree}']
 intrinsic_value = 100
-p_market = intrinsic_value + np.norm(0)
+p_market = intrinsic_value + np.random.normal(0)
 
 
 ########################################################################
-# defining the agents: banks, shadow banks, savers, loans
+# defining the agents: banks, shadow banks
 
 
 class Bank:
@@ -250,11 +250,11 @@ def dynamic_bank (www):
         www.lend_to_banks = 0
         www.bank_sec = www.bank_sec - delta
         www.stock = www.bank_sec / p_market
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock :
         www.bankrupt = True
 
 
 #### equilibrium in security market
- stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
+stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
 
 #p_market =
