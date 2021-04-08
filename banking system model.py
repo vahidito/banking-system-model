@@ -19,6 +19,8 @@ rfree_max = 0.25
 rfree_vector = [f'{rfree}']
 intrinsic_value = 100
 p_market = intrinsic_value + np.random.normal(0)
+p_market_max = 150
+p_market_min = 50
 
 
 ########################################################################
@@ -67,7 +69,13 @@ class Shadow_Bank:
         self.security = security
         self.s_alpha = s_alpha
         self.s_provision = s_provision
+        self.int_value = np.random.normal(intrinsic_value)
         self.stock = security / p_market
+
+
+
+
+
         ##### income and expense of shadow bank
 
 
@@ -142,6 +150,7 @@ def optimize_bank(mmm):
     mmm.bank_cash = result.x[4]
     mmm.lend_to_banks = result.x[0]
     mmm.lend_to_loans = result.x[3]
+    mmm.bank_sec_old = mmm.bank_sec
     mmm.bank_sec = result.x[1]
     mmm.borrow_from_banks = result.x[2]
     mmm.ret_on_sec = float(np.random.normal(ret_sec_bank, ret_sec_bank_sigma))
@@ -152,6 +161,18 @@ def optimize_bank(mmm):
 
     mmm = Bank(result.x[4], result.x[0], result.x[3], result.x[1], result.x[2], mmm.deposits, mmm.equity,
                mmm.alpha_min, mmm.provision_per, mmm.phi, mmm.zeta, mmm.car, mmm.xs, mmm.xbl, mmm.xl)
+
+    mmm.sec_sale = mmm.bank_sec_old - mmm.bank_sec
+    if  nnn.sec_sale > 0:
+        nnn.demand_of_stock_b = 0
+        nnn.supply_of_stock_b = nnn.security_sale
+    elif  nnn.security_sale < 0:
+        nnn.demand_of_stock_b = nnn.security_sale
+        nnn.supply_of_stock_b = 0
+    else:
+        nnn.demand_of_stock_b = 0
+        nnn.supply_of_stock_b = 0
+
 
     ########################################################
     # optimixation phase
@@ -173,10 +194,19 @@ def optimize_shadow_bank(nnn):
     nnn.shadow_bank_cash = result_s.x[1]
     nnn.security_old = nnn.security
     nnn.security = result_s.x[0]
-    nnn.security_sale = nnn.security - nnn.security_old
-    print(result_s.x)
-    print(nnn.security)
-    print(nnn.security_old)
+    nnn.shadow_bank_cash = result_s.x[1]
+    nnn.security_sale = nnn.security_old - nnn.security
+    if  nnn.security_sale > 0:
+        nnn.demand_of_stock = 0
+        nnn.supply_of_stock = nnn.security_sale
+    elif  nnn.security_sale < 0:
+        nnn.demand_of_stock = nnn.security_sale
+        nnn.supply_of_stock = 0
+    else:
+        nnn.demand_of_stock = 0
+        nnn.supply_of_stock = 0
+    print(nnn.security_sale)
+    # print(nnn.security_old)
 
     ###############################################################
 
@@ -240,7 +270,22 @@ else:
     rfree_vector.append(f'{rfree}')
 
 #### equilibrium in security market
-stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.bank_sec + bank_maskan.bank_sec + bank_sanatmadan.bank_sec + bank_keshavarzi.bank_sec + bank_tosetavon.bank_sec + bank_post.bank_sec + bank_eghtesadnovin.bank_sec + bank_parsian.bank_sec + bank_karafarin.bank_sec + bank_saman.bank_sec + bank_saman.bank_sec + bank_sina.bank_sec + bank_khavarmiane.bank_sec + bank_shahr.bank_sec + bank_dey.bank_sec + bank_saderat.bank_sec + bank_tejarat.bank_sec + bank_mellat.bank_sec + bank_refah.bank_sec + bank_ayandeh.bank_sec + bank_gardeshgary.bank_sec + bank_iranzamin.bank_sec + bank_sarmaye.bank_sec + bank_sarmaye.bank_sec + bank_pasargad.bank_sec + bank_melal.bank_sec
+stock_supply_of_banks = bank_melli.supply_of_stock_b+ bank_seppah.supply_of_stock_b+ bank_tosesaderat.supply_of_stock_b+ bank_maskan.supply_of_stock_b+ bank_sanatmadan.supply_of_stock_b+ bank_keshavarzi.supply_of_stock_b+ bank_tosetavon.supply_of_stock_b+ bank_post.supply_of_stock_b+ bank_eghtesadnovin.supply_of_stock_b+ bank_parsian.supply_of_stock_b+ bank_karafarin.supply_of_stock_b+ bank_saman.supply_of_stock_b+ bank_saman.supply_of_stock_b+ bank_sina.supply_of_stock_b+ bank_khavarmiane.supply_of_stock_b+ bank_shahr.supply_of_stock_b+ bank_dey.supply_of_stock_b+ bank_saderat.supply_of_stock_b+ bank_tejarat.supply_of_stock_b+ bank_mellat.supply_of_stock_b+ bank_refah.supply_of_stock_b+ bank_ayandeh.supply_of_stock_b+ bank_gardeshgary.supply_of_stock_b+ bank_iranzamin.supply_of_stock_b+ bank_sarmaye.supply_of_stock_b+ bank_sarmaye.supply_of_stock_b+ bank_pasargad.supply_of_stock_b+ bank_melal. supply_of_stock_b
+stock_demand_of_banks = bank_melli.demand_of_stock_b+ bank_seppah.demand_of_stock_b+ bank_tosesaderat.demand_of_stock_b+ bank_maskan.demand_of_stock_b+ bank_sanatmadan.demand_of_stock_b+ bank_keshavarzi.demand_of_stock_b+ bank_tosetavon.demand_of_stock_b+ bank_post.demand_of_stock_b+ bank_eghtesadnovin.demand_of_stock_b+ bank_parsian.demand_of_stock_b+ bank_karafarin.demand_of_stock_b+ bank_saman.demand_of_stock_b+ bank_saman.demand_of_stock_b+ bank_sina.demand_of_stock_b+ bank_khavarmiane.demand_of_stock_b+ bank_shahr.demand_of_stock_b+ bank_dey.demand_of_stock_b+ bank_saderat.demand_of_stock_b+ bank_tejarat.demand_of_stock_b+ bank_mellat.demand_of_stock_b+ bank_refah.demand_of_stock_b+ bank_ayandeh.demand_of_stock_b+ bank_gardeshgary.demand_of_stock_b+ bank_iranzamin.demand_of_stock_b+ bank_sarmaye.demand_of_stock_b+ bank_sarmaye.demand_of_stock_b+ bank_pasargad.demand_of_stock_b+ bank_melal. demand_of_stock_b
+stock_demand_of_shadow_banks = shadow1.demand_of_stock + shadow2.demand_of_stock+ shadow3.demand_of_stock + shadow4.demand_of_stock+ shadow5.demand_of_stock + shadow6.demand_of_stock+ shadow7.demand_of_stock + shadow8.demand_of_stock+ shadow9.demand_of_stock + shadow10.demand_of_stock+ shadow11.demand_of_stock + shadow12.demand_of_stock+ shadow13.demand_of_stock + shadow14.demand_of_stock+ shadow15.demand_of_stock
+stock_supply_of_shadow_banks = shadow1.supply_of_stock + shadow2.supply_of_stock+ shadow3.supply_of_stock + shadow4.supply_of_stock+ shadow5.supply_of_stock + shadow6.supply_of_stock+ shadow7.supply_of_stock + shadow8.supply_of_stock+ shadow9.supply_of_stock + shadow10.supply_of_stock+ shadow11.supply_of_stock + shadow12.supply_of_stock+ shadow13.supply_of_stock + shadow14.supply_of_stock+ shadow15.supply_of_stock
+total_stock_demand = stock_demand_of_banks + stock_demand_of_shadow_banks
+total_stock_supply = stock_supply_of_banks + stock_supply_of_shadow_banks
+
+if total_stock_demand > total_stock_supply:
+    p_market = (p_market + p_market_max) / 2
+elif demand_of_banks < supply_of_banks:
+    p_market = (p_market + p_market_min) / 2
+else:
+    p_market = p_market
+
+
+
 
 # rfree_plot = []
 # for i in range(0, len(rfree_vector)):
@@ -251,26 +296,26 @@ stock_supply = bank_melli.bank_sec + bank_seppah.bank_sec + bank_tosesaderat.ban
 
 ##### dynamics of model
 # the name of bank which is source of the shock
-shock_hit = bank_melli
-sig = 0.01
-shock = sig * (shock_hit.deposits + shock_hit.borrow_from_banks)
+# shock_hit = bank_melli
+# sig = 0.01
+# shock = sig * (shock_hit.deposits + shock_hit.borrow_from_banks)
 
 
-def dynamic_bank(www):
-    if shock <= www.bank_cash:
-        landa = sig * (www.deposits + www.borrow_from_banks)
-        www.equity = www.equity - (www.bank_cash - landa)
-        www.bank_cash = www.bank_cash - landa
-    elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash and www.lend_to_banks != 0:
-        www.equity = www.equity - www.bank_cash
-        www.bank_cash = 0
-        www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
-        delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
-        www.bank_cash = 0
-        www.equity = www.equity - www.bank_cash
-        www.lend_to_banks = 0
-        www.bank_sec = www.bank_sec - delta
-        www.stock = www.bank_sec / p_market
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
-        www.bankrupt = True
+# def dynamic_bank(www):
+#     if shock <= www.bank_cash:
+#         landa = sig * (www.deposits + www.borrow_from_banks)
+#         www.equity = www.equity - (www.bank_cash - landa)
+#         www.bank_cash = www.bank_cash - landa
+#     elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash and www.lend_to_banks != 0:
+#         www.equity = www.equity - www.bank_cash
+#         www.bank_cash = 0
+#         www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
+#     elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
+#         delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
+#         www.bank_cash = 0
+#         www.equity = www.equity - www.bank_cash
+#         www.lend_to_banks = 0
+#         www.bank_sec = www.bank_sec - delta
+#         www.stock = www.bank_sec / p_market
+#     elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
+#         www.bankrupt = True
