@@ -8,6 +8,7 @@ from scipy.optimize import linprog
 
 ### global variables
 n_sim = 15
+etha = 1
 ret_sec_bank = 0.18
 ret_sec_bank_sigma = 0.01
 ret_sec_shbank = 0.18
@@ -217,6 +218,39 @@ def optimize_shadow_bank(nnn):
 
 
 ###############################################################
+##### dynamics of model
+# the name of bank which is source of the shock
+
+shock_hit = bank_melli
+
+sig = 0.01
+shock = sig * (shock_hit.deposits + shock_hit.borrow_from_banks)
+
+
+def dynamic_bank(www):
+    if shock <= www.bank_cash:
+        www.equity = www.equity - shock
+        www.bank_cash = www.bank_cash - shock
+    elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash:
+        landa = (sig * (www.deposits + www.borrow_from_banks)) - www.bank_cash
+        www.equity = www.equity - www.bank_cash
+        www.bank_cash = 0
+        www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
+        delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
+        www.bank_cash = 0
+        www.equity = www.equity - www.bank_cash
+        www.lend_to_banks = 0
+        www.bank_sec = www.bank_sec - delta
+        www.stock = www.bank_sec / p_market
+    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
+        www.bank_cash = 0
+        www.equity = 0
+        www.lend_to_banks = 0
+        www.bank_sec = 0
+        www.borrow_from_banks = 0
+        www.bankrupt = True
+
 
 ###############################################################
 
@@ -247,33 +281,6 @@ for ttt in range(n_sim):
     optimize_bank(bank_sarmaye)
     optimize_bank(bank_pasargad)
     optimize_bank(bank_melal)
-
-    dynamic_bank(bank_melli)
-    dynamic_bank(bank_seppah)
-    dynamic_bank(bank_tosesaderat)
-    dynamic_bank(bank_maskan)
-    dynamic_bank(bank_sanatmadan)
-    dynamic_bank(bank_keshavarzi)
-    dynamic_bank(bank_tosetavon)
-    dynamic_bank(bank_post)
-    dynamic_bank(bank_eghtesadnovin)
-    dynamic_bank(bank_parsian)
-    dynamic_bank(bank_karafarin)
-    dynamic_bank(bank_saman)
-    dynamic_bank(bank_sina)
-    dynamic_bank(bank_khavarmiane)
-    dynamic_bank(bank_shahr)
-    dynamic_bank(bank_dey)
-    dynamic_bank(bank_saderat)
-    dynamic_bank(bank_tejarat)
-    dynamic_bank(bank_mellat)
-    dynamic_bank(bank_refah)
-    dynamic_bank(bank_ayandeh)
-    dynamic_bank(bank_gardeshgary)
-    dynamic_bank(bank_iranzamin)
-    dynamic_bank(bank_sarmaye)
-    dynamic_bank(bank_pasargad)
-    dynamic_bank(bank_melal)
 
     optimize_shadow_bank(shadow1)
     optimize_shadow_bank(shadow2)
@@ -362,42 +369,19 @@ plt.show()
 plt.plot(every_thing_plot)
 plt.show()
 
-##### dynamics of model
-# the name of bank which is source of the shock
 
-shock_hit = bank_melli
+def redemption(www):
+    p_change = 1 - (p_market / p_market_old)
+    if p_change < 0:
+        www.redemption = 0
+    else:
+        www.redemption = www.participation * ((math.exp(etha * p_change) - 1))
 
-sig = 0.01
-shock = sig * (shock_hit.deposits + shock_hit.borrow_from_banks)
+    if www.redemption < www.shadow_bank_cash:
+        www.shadow_bank_cash = www.shadow_bank_cash - www.redemption
+        www.participation = www.participation - www.redemption
 
-
-def dynamic_bank(www):
-    if shock <= www.bank_cash:
-        www.equity = www.equity - shock
-        www.bank_cash = www.bank_cash - shock
-    elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash:
-        landa = (sig * (www.deposits + www.borrow_from_banks)) - www.bank_cash
-        www.equity = www.equity - www.bank_cash
-        www.bank_cash = 0
-        www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
-        delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
-        www.bank_cash = 0
-        www.equity = www.equity - www.bank_cash
-        www.lend_to_banks = 0
-        www.bank_sec = www.bank_sec - delta
-        www.stock = www.bank_sec / p_market
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
-        www.bank_cash = 0
-        www.equity = 0
-        www.lend_to_banks = 0
-        www.bank_sec = 0
-        www.borrow_from_banks = 0
-        www.bankrupt = True
-
-
-def dynamic_sh_bank(zzz):
-    if ret_on_sec < 0:
-        mmm
+    elif www.shadow_bank_cash < www.redemption <   www.security + www.shadow_bank_cash:
+        www.shadow_bank_cash = 0
 
 
