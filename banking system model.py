@@ -3,21 +3,22 @@ import matplotlib.pyplot as plt
 import scipy as spy
 from scipy.stats import norm
 from scipy.optimize import linprog
-
+import math
 ##################################################################################
 
 ### global variables
-n_sim = 15
+n_sim = 50
 etha = 1
 ret_sec_bank = 0.18
 ret_sec_bank_sigma = 0.01
 ret_sec_shbank = 0.18
-rfree = 0.185
-rfree_min = 0.1
+rfree = 0.21
+rfree_min = 0.20
 rfree_max = 0.25
 rfree_vector = [f'{rfree}']
 intrinsic_value = 100
 p_market = intrinsic_value + np.random.normal(0)
+p_market_old = p_market
 p_market_max = 110
 p_market_min = 90
 p_market_vector = [f'{p_market}']
@@ -26,6 +27,8 @@ ret_sec_bank_vector = [f'{ret_sec_bank}']
 every = 0
 every_thing_vector = [f'{every}']
 
+every1 = 0
+every1_thing_vector = [f'{every1}']
 
 ########################################################################
 # defining the agents: banks, shadow banks
@@ -216,7 +219,28 @@ def optimize_shadow_bank(nnn):
 
     nnn = Shadow_Bank((result_s.x[0] + result_s.x[1]), result_s.x[0], result_s.x[1], nnn.s_alpha, nnn.s_provision)
 
+######################################################################################################
 
+def redemption(www):
+    p_change = 1 - (p_market / p_market_old)
+    if p_change < 0:
+        www.redemption = 0
+    else:
+        www.redemption = www.participation * ((math.exp(etha * p_change) - 1))
+
+    if www.redemption < www.shadow_bank_cash:
+        www.shadow_bank_cash = www.shadow_bank_cash - www.redemption
+        www.participation = www.participation - www.redemption
+
+    elif www.shadow_bank_cash < www.redemption < www.security + www.shadow_bank_cash:
+        www.shadow_bank_cash = 0
+        www.security = www.security + www.shadow_bank_cash - www.redemption
+        www.participation = www.participation - www.redemption
+    elif www.security + www.shadow_bank_cash < www.redemption:
+        www.exit = True
+        www.participation = 0
+        www.security = 0
+        www.shadow_bank_cash = 0
 ###############################################################
 ##### dynamics of model
 # the name of bank which is source of the shock
@@ -253,8 +277,11 @@ def dynamic_bank(www):
 
 
 ###############################################################
-
+################ start the simulation
+################
 for ttt in range(n_sim):
+
+    # first banks
     optimize_bank(bank_melli)
     optimize_bank(bank_seppah)
     optimize_bank(bank_tosesaderat)
@@ -282,6 +309,26 @@ for ttt in range(n_sim):
     optimize_bank(bank_pasargad)
     optimize_bank(bank_melal)
 
+    # second shadow banks determine the redemptions because it is almost a legal issue the they optimize which is a ecnomic behaviour
+
+    redemption(shadow1)
+    redemption(shadow2)
+    redemption(shadow3)
+    redemption(shadow4)
+    redemption(shadow5)
+    redemption(shadow6)
+    redemption(shadow7)
+    redemption(shadow8)
+    redemption(shadow9)
+    redemption(shadow10)
+    redemption(shadow11)
+    redemption(shadow12)
+    redemption(shadow13)
+    redemption(shadow14)
+    redemption(shadow15)
+
+    ## optimization of shadow banks
+
     optimize_shadow_bank(shadow1)
     optimize_shadow_bank(shadow2)
     optimize_shadow_bank(shadow3)
@@ -297,6 +344,7 @@ for ttt in range(n_sim):
     optimize_shadow_bank(shadow13)
     optimize_shadow_bank(shadow14)
     optimize_shadow_bank(shadow15)
+
 
     demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks + bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks + bank_melal.borrow_from_banks
     supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks + bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks + bank_melal.lend_to_banks
@@ -331,28 +379,36 @@ for ttt in range(n_sim):
     ret_sec_shbank = ret_on_sec
     p_market_vector.append(p_market)
     ret_sec_bank_vector.append(ret_on_sec)
-    every = bank_melli.sec_sale
+
+
+
+
+    every = total_stock_demand
     every_thing_vector.append(every)
 
-# print(rfree_vector)
-# print(ret_sec_bank_vector)
+    every1 = 0
+    every1_thing_vector.append(every1)
 
-
-rfree_plot = []
-for i in range(0, len(rfree_vector)):
-    rfree_plot.append([float(rfree_vector[i])])
-
-p_market_plot = []
-for i in range(0, len(p_market_vector)):
-    p_market_plot.append([float(p_market_vector[i])])
-
-ret_on_sec_plot = []
-for i in range(0, len(ret_sec_bank_vector)):
-    ret_on_sec_plot.append([float(ret_sec_bank_vector[i])])
+# rfree_plot = []
+# for i in range(0, len(rfree_vector)):
+#     rfree_plot.append([float(rfree_vector[i])])
+#
+# p_market_plot = []
+# for i in range(0, len(p_market_vector)):
+#     p_market_plot.append([float(p_market_vector[i])])
+#
+# ret_on_sec_plot = []
+# for i in range(0, len(ret_sec_bank_vector)):
+#     ret_on_sec_plot.append([float(ret_sec_bank_vector[i])])
 
 every_thing_plot = []
 for i in range(0, len(every_thing_vector)):
     every_thing_plot.append([float(every_thing_vector[i])])
+
+every1_thing_plot = []
+for i in range(0, len(every1_thing_vector)):
+    every1_thing_plot.append([float(every1_thing_vector[i])])
+
 
 # print(ret_on_sec_plot)
 # print(p_market_plot)
@@ -360,28 +416,12 @@ for i in range(0, len(every_thing_vector)):
 # print(every_thing_vector)
 
 
-plt.plot(rfree_plot)
-plt.show()
+# plt.plot(rfree_plot)
+# plt.show()
 # plt.plot(p_market_plot)
 # plt.show()
 # plt.plot(ret_on_sec_plot)
 # plt.show()
 plt.plot(every_thing_plot)
 plt.show()
-
-
-def redemption(www):
-    p_change = 1 - (p_market / p_market_old)
-    if p_change < 0:
-        www.redemption = 0
-    else:
-        www.redemption = www.participation * ((math.exp(etha * p_change) - 1))
-
-    if www.redemption < www.shadow_bank_cash:
-        www.shadow_bank_cash = www.shadow_bank_cash - www.redemption
-        www.participation = www.participation - www.redemption
-
-    elif www.shadow_bank_cash < www.redemption <   www.security + www.shadow_bank_cash:
-        www.shadow_bank_cash = 0
-
 
