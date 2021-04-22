@@ -115,21 +115,21 @@ bank_melal = Bank(0.2, 2.3, 10.8, 21.1, 15.2, 15, 4, 0.1, 0.1, 0.1, 0.1, 0.07, 0
 
 # introduction of Iranian Shadow Banks
 
-shadow1 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.01, 0.01)
-shadow2 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.3, 0.3)
-shadow3 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.91, 0.01)
-shadow4 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow5 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow6 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow7 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow8 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow9 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow10 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow11 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow12 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow13 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow14 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
-shadow15 = Shadow_Bank(np.random.normal(100), np.random.normal(20), np.random.normal(80), 0.1, 0.1)
+shadow1 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.01, 0.01)
+shadow2 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.3, 0.3)
+shadow3 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.91, 0.01)
+shadow4 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow5 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow6 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow7 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow8 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow9 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow10 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow11 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow12 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow13 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow14 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow15 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
 
 
 #####################################################
