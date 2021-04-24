@@ -6,8 +6,9 @@ from scipy.optimize import linprog
 import math
 
 ##################################################################################
+############
+# global variables
 
-### global variables
 n_sim = 30
 etha = 1
 ret_sec_bank = 0.18
@@ -17,13 +18,18 @@ rfree = 0.18
 rfree_min = 0.20
 rfree_max = 0.25
 rfree_vector = [f'{rfree}']
-intrinsic_value = 100
-p_market = intrinsic_value + np.random.normal(0)
+intrinsic_value = 1
+p_market = 1
 p_market_old = p_market
-p_market_max = 150
-p_market_min = 80
+p_market_max = 1.50
+p_market_min = 0.80
+
 p_market_vector = [f'{p_market}']
 ret_sec_bank_vector = [f'{ret_sec_bank}']
+
+#################################################
+#########
+# for visualization
 
 every = 0
 every_thing_vector = [f'{every}']
@@ -50,6 +56,10 @@ class Bank:
         self.deposits = deposits
         self.borrow_from_banks = borrow_from_banks
         self.equity = equity
+        if self.equity < 0:
+            self.bankrupt = True
+        else:
+            self.bankrupt = False
 
         self.alpha_min = alpha_min
         self.provision_per = provision_per
@@ -64,8 +74,12 @@ class Bank:
         self.security_sale = 0
         self.supply_of_stock_b = 0
         self.demand_of_stock_b = 0
+        self.rwa = (xs * self.bank_sec) + (xl * self.lend_to_loans) + (xbl * self.lend_to_banks)
+        self.nbl = 0
+        self.ns = 0
 
-        ##### income and expense of bank
+        # income and expense of bank
+
         self.phi = phi
         self.sigma = phi * (self.deposits + self.equity)
         # self.profit = float(np.random.normal(self.net_income, self.sigma, 1))
@@ -76,8 +90,13 @@ class Bank:
 
 class Shadow_Bank:
     def __init__(self, participation, shadow_bank_cash, security, s_alpha, s_provision):
-        self.exit = False
+
         self.participation = participation
+        if self.participation < 0:
+            self.exit = True
+        else:
+            self.exit = False
+
         self.shadow_bank_cash = shadow_bank_cash
         self.security = security
         self.s_alpha = s_alpha
@@ -85,6 +104,7 @@ class Shadow_Bank:
         self.int_value = np.random.normal(intrinsic_value)
         self.redemption = 0
         self.stock = security / p_market
+        self.nbl_s = 0
 
         ##### income and expense of shadow bank
 
@@ -121,29 +141,29 @@ bank_melal = Bank(0.2, 2.3, 10.8, 21.1, 15.2, 15, 4, 0.1, 0.1, 0.1, 0.1, 0.07, 0
 
 # introduction of Iranian Shadow Banks
 
-shadow1 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.01, 0.01)
-shadow2 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.3, 0.3)
-shadow3 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.91, 0.01)
-shadow4 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow5 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow6 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow7 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow8 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow9 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow10 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow11 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow12 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow13 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow14 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
-shadow15 = Shadow_Bank(np.random.normal(45), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow1 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.01, 0.01)
+shadow2 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.3, 0.3)
+shadow3 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.91, 0.01)
+shadow4 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow5 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow6 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow7 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow8 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow9 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow10 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow11 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow12 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow13 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow14 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
+shadow15 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.1, 0.1)
 
 
 #####################################################
 
 #####################################################
 # 1-BL 2-S 3-BB 4-L 5-C
-# optimixation phase
-### objective function of banks
+# optimization phase
+# objective function of banks
 
 def optimize_bank(mmm):
     if mmm.bankrupt == False:
@@ -164,7 +184,7 @@ def optimize_bank(mmm):
         mmm.bank_cash = result.x[4]
         mmm.lend_to_banks = result.x[0]
         mmm.lend_to_loans = result.x[3]
-        bank_sec_old = mmm.bank_sec
+
         mmm.bank_sec = result.x[1]
         mmm.borrow_from_banks = result.x[2]
         mmm.ret_on_sec = float(np.random.normal(ret_sec_bank, ret_sec_bank_sigma))
@@ -173,17 +193,6 @@ def optimize_bank(mmm):
         mmm.sigma = abs(mmm.phi * (mmm.deposits + mmm.equity))
         mmm.profit = float(np.random.normal(mmm.net_income, mmm.sigma, 1))
 
-        mmm.sec_sale = bank_sec_old - mmm.bank_sec
-        if mmm.sec_sale > 0:
-            mmm.demand_of_stock_b = 0
-            mmm.supply_of_stock_b = mmm.security_sale
-        elif mmm.security_sale < 0:
-            mmm.demand_of_stock_b = mmm.security_sale
-            mmm.supply_of_stock_b = 0
-        else:
-            mmm.demand_of_stock_b = 0
-            mmm.supply_of_stock_b = 0
-
         mmm = Bank(result.x[4], result.x[0], result.x[3], result.x[1], result.x[2], mmm.deposits, mmm.equity,
                    mmm.alpha_min, mmm.provision_per, mmm.phi, mmm.zeta, mmm.car, mmm.xs, mmm.xbl, mmm.xl, mmm.etha_max)
     else:
@@ -191,39 +200,31 @@ def optimize_bank(mmm):
                    mmm.xl, mmm.etha_max)
 
     ########################################################
-    # optimixation phase
-    ### objective function of shadow banks
+    # optimization phase
+    # objective function of shadow banks
     # 1- security 2-cash
 
 
 def optimize_shadow_bank(nnn):
-    c_s = np.array([np.random.normal(-ret_sec_shbank, 0.01), 0])
-    A_ub_s = np.array([[0, -1]])
-    b_ub_s = np.array([-(nnn.s_alpha + nnn.s_provision) * nnn.participation])
-    A_eq_s = np.array([[1, 1]])
-    b_eq_s = np.array([nnn.participation])
-    x0_bounds_s = (0, None)
-    x1_bounds_s = (0, None)
+    if nnn.exit == False:
 
-    bounds_s = [x0_bounds_s, x1_bounds_s]
-    result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
-    nnn.shadow_bank_cash = result_s.x[1]
-    nnn.security_old = nnn.security
-    nnn.security = result_s.x[0]
-    nnn.shadow_bank_cash = result_s.x[1]
+        c_s = np.array([np.random.normal(-ret_sec_shbank, 0.01), 0])
+        A_ub_s = np.array([[0, -1]])
+        b_ub_s = np.array([-(nnn.s_alpha + nnn.s_provision) * nnn.participation])
+        A_eq_s = np.array([[1, 1]])
+        b_eq_s = np.array([nnn.participation])
+        x0_bounds_s = (0, None)
+        x1_bounds_s = (0, None)
 
-    nnn.security_sale = nnn.security_old - nnn.security
-    if nnn.security_sale > 0:
-        nnn.demand_of_stock = 0
-        nnn.supply_of_stock = nnn.security_sale
-    elif nnn.security_sale < 0:
-        nnn.demand_of_stock = abs(nnn.security_sale)
-        nnn.supply_of_stock = 0
+        bounds_s = [x0_bounds_s, x1_bounds_s]
+        result_s = linprog(c_s, A_ub=A_ub_s, b_ub=b_ub_s, A_eq=A_eq_s, b_eq=b_eq_s, bounds=bounds_s)
+        nnn.shadow_bank_cash = result_s.x[1]
+        nnn.security_old = nnn.security
+        nnn.security = result_s.x[0]
+        nnn.shadow_bank_cash = result_s.x[1]
+
     else:
-        nnn.demand_of_stock = 0
-        nnn.supply_of_stock = 0
-
-    nnn = Shadow_Bank((result_s.x[0] + result_s.x[1]), result_s.x[0], result_s.x[1], nnn.s_alpha, nnn.s_provision)
+        nnn = Shadow_Bank(0, 0, 0, nnn.s_alpha, nnn.s_provision)
 
 
 ######################################################################################################
@@ -250,45 +251,72 @@ def redemption(www):
         www.shadow_bank_cash = 0
 
 
+################################################################
+
+optimize_bank(bank_melli)
+optimize_bank(bank_seppah)
+optimize_bank(bank_tosesaderat)
+optimize_bank(bank_maskan)
+optimize_bank(bank_sanatmadan)
+optimize_bank(bank_keshavarzi)
+optimize_bank(bank_tosetavon)
+optimize_bank(bank_post)
+optimize_bank(bank_eghtesadnovin)
+optimize_bank(bank_parsian)
+optimize_bank(bank_karafarin)
+optimize_bank(bank_saman)
+optimize_bank(bank_sina)
+optimize_bank(bank_khavarmiane)
+optimize_bank(bank_shahr)
+optimize_bank(bank_dey)
+optimize_bank(bank_saderat)
+optimize_bank(bank_tejarat)
+optimize_bank(bank_mellat)
+optimize_bank(bank_refah)
+optimize_bank(bank_ayandeh)
+optimize_bank(bank_gardeshgary)
+optimize_bank(bank_iranzamin)
+optimize_bank(bank_sarmaye)
+optimize_bank(bank_pasargad)
+optimize_bank(bank_melal)
+
+optimize_shadow_bank(shadow1)
+optimize_shadow_bank(shadow2)
+optimize_shadow_bank(shadow3)
+optimize_shadow_bank(shadow4)
+optimize_shadow_bank(shadow5)
+optimize_shadow_bank(shadow6)
+optimize_shadow_bank(shadow7)
+optimize_shadow_bank(shadow8)
+optimize_shadow_bank(shadow9)
+optimize_shadow_bank(shadow10)
+optimize_shadow_bank(shadow11)
+optimize_shadow_bank(shadow12)
+optimize_shadow_bank(shadow13)
+optimize_shadow_bank(shadow14)
+optimize_shadow_bank(shadow15)
+
 ###############################################################
 ##### dynamics of model
 # the name of bank which is source of the shock
 
 shock_hit = bank_melli
 
-sig = 0.5
-shock = sig * (shock_hit.deposits + shock_hit.borrow_from_banks)
 
-
-def dynamic_bank(www):
-    if shock <= www.bank_cash:
-        www.equity = www.equity - shock
-        www.bank_cash = www.bank_cash - shock
-    elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash:
-        landa = (sig * (www.deposits + www.borrow_from_banks)) - www.bank_cash
-        www.equity = www.equity - www.bank_cash
-        www.bank_cash = 0
-        www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
-        delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
-        www.bank_cash = 0
-        www.equity = www.equity - www.bank_cash
-        www.lend_to_banks = 0
-        www.bank_sec = www.bank_sec - delta
-        www.stock = www.bank_sec / p_market
-    elif (www.bank_cash + www.lend_to_banks + www.bank_sec) <= shock:
-        www.bank_cash = 0
-        www.equity = 0
-        www.lend_to_banks = 0
-        www.bank_sec = 0
-        www.borrow_from_banks = 0
-        www.bankrupt = True
+def dynamic_bank(www, sig):
+    shock = sig * (www.deposits + www.borrow_from_banks)
+    lamda = max(shock - www.bank_cash, 0)
+    v_liq = max(0, www.alpha_min * www.deposits - www.bank_cash)
+    v_cap = max(0, (www.car * www.rwa - www.bank_cash) / www.car)
+    www.nbl = min(max(lamda + v_liq, v_cap / www.xbl), www.lend_to_banks)
+    www.ns = min(max(lamda + v_liq, v_cap / www.xs), www.bank_sec)
 
 
 ###############################################################
 ################ start the simulation
 ################
 dynamic_bank(shock_hit)
+
 for ttt in range(n_sim):
 
     # first banks
@@ -319,7 +347,7 @@ for ttt in range(n_sim):
     optimize_bank(bank_pasargad)
     optimize_bank(bank_melal)
 
-    # second shadow banks determine the redemptions because it is almost a legal issue the they optimize which is a ecnomic behaviour
+    # second shadow banks determine the redemptions because it is almost a legal issue then they optimize which is a ecnomic behaviour
 
     redemption(shadow1)
     redemption(shadow2)
