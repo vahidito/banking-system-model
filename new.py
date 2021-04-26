@@ -17,6 +17,7 @@ rfree = 0.18
 rfree_min = 0.20
 rfree_max = 0.25
 rfree_vector = [f'{rfree}']
+
 intrinsic_value = 1
 p_market = 1
 p_market_old = p_market
@@ -24,7 +25,7 @@ p_market_max = 1.50
 p_market_min = 0.80
 
 p_market_vector = [f'{p_market}']
-ret_sec_bank_vector = [f'{ret_sec_bank}']
+
 
 #################################################
 # variables for visualization
@@ -46,7 +47,7 @@ every2_thing_vector = [f'{every2}']
 class Bank:
     def __init__(self, bank_cash, lend_to_banks, lend_to_loans, bank_sec, deposits, borrow_from_banks, equity,
                  alpha_min, provision_per, phi, zeta, car, xs, xbl, xl, etha_max):
-        self.bankrupt = False
+
         self.bank_cash = bank_cash
         self.lend_to_banks = lend_to_banks
         self.lend_to_loans = lend_to_loans
@@ -58,6 +59,8 @@ class Bank:
             self.bankrupt = True
         else:
             self.bankrupt = False
+
+        # setting parameters of the bank
 
         self.alpha_min = alpha_min
         self.provision_per = provision_per
@@ -75,6 +78,8 @@ class Bank:
         self.rwa = (xs * self.bank_sec) + (xl * self.lend_to_loans) + (xbl * self.lend_to_banks)
         self.nbl = 0
         self.ns = 0
+        self.init_value_stock = np.random.normal(intrinsic_value, 0.05)
+        self.nd = 0
 
         # income and expense of bank
 
@@ -102,7 +107,8 @@ class Shadow_Bank:
         self.int_value = np.random.normal(intrinsic_value)
         self.redemption = 0
         self.stock = security / p_market
-        self.nbl_s = 0
+        self.ns_s = 0
+        self.nd_s = 0
 
 
 ###############################################################
@@ -180,8 +186,13 @@ def optimize_bank(mmm):
         mmm.bank_cash = result.x[4]
         mmm.lend_to_banks = result.x[0]
         mmm.lend_to_loans = result.x[3]
-
+        mmm.bank_sec_old = mmm.bank_sec
         mmm.bank_sec = result.x[1]
+        diff = mmm.bank_sec - mmm.bank_sec_old
+        if diff > 0:
+            mmm.nd = diff
+        else:
+            mmm.ns = -diff
         mmm.borrow_from_banks = result.x[2]
         mmm.ret_on_sec = float(np.random.normal(ret_sec_bank, ret_sec_bank_sigma))
         mmm.net_income = (mmm.ret_on_sec * mmm.bank_sec) + (rfree * mmm.lend_to_banks) - (
@@ -226,7 +237,7 @@ def optimize_shadow_bank(nnn):
 ################################################
 # defining redemption in model
 def redemption(www):
-    p_change = 1 - (p_market / p_market_old)
+    p_change = www.int_value - p_market
     if p_change < 0:
         www.redemption = 0
     else:
@@ -321,7 +332,7 @@ else:
 # the name of bank which is source of the shock
 
 
-def sale_quantity_bank(www, sig):
+def bank_shock(www, sig):
     shock = sig * (www.deposits + www.borrow_from_banks)
     if shock <= www.bank_cash:
         www.equity = www.equity - shock
@@ -349,10 +360,22 @@ def sale_quantity_bank(www, sig):
 
 
 #################################
-# demand of stock by shadow banks
+# demand of stock
 
-def demand_of_stock(mmm):
-    mmm.demand_of_stock = mmm.shadow_bank_cash - mmm.redemption
+def demand_of_stock_shadow_bank(mmm):
+    if p_market > mmm.int_value:
+        mmm.nd_s = 0
+    else:
+        mmm.nd_s = mmm.shadow_bank_cash - mmm.redemption
+        mmm.shadow_bank_cash = mmm.shadow_bank_cash - mmm.nd_s
+        mmm.security = mmm.security + mmm.nd_s
+
+
+#################################
+# supply of stock by shadow banks and banks
+
+# redemption
+# shock
 
 #################################
 # equilibrium in capital market
@@ -367,8 +390,22 @@ total_stock_supply = stock_supply_of_shadow_banks
 ###############################################################
 # start the simulation
 ################
-dynamic_bank(shock_hit)
 
+    redemption(shadow1)
+    redemption(shadow2)
+    redemption(shadow3)
+    redemption(shadow4)
+    redemption(shadow5)
+    redemption(shadow6)
+    redemption(shadow7)
+    redemption(shadow8)
+    redemption(shadow9)
+    redemption(shadow10)
+    redemption(shadow11)
+    redemption(shadow12)
+    redemption(shadow13)
+    redemption(shadow14)
+    redemption(shadow15)
 for ttt in range(n_sim):
 
     # first banks
@@ -452,9 +489,7 @@ for ttt in range(n_sim):
         p_market = p_market
 
     ret_on_sec = p_market / p_market_old - 1
-    ret_sec_shbank = ret_on_sec
-    p_market_vector.append(p_market)
-    ret_sec_bank_vector.append(ret_on_sec)
+
 
     every = total_stock_demand
     every_thing_vector.append(every)
@@ -465,17 +500,15 @@ for ttt in range(n_sim):
     every2 = p_market
     every2_thing_vector.append(every2)
 
-# rfree_plot = []
-# for i in range(0, len(rfree_vector)):
-#     rfree_plot.append([float(rfree_vector[i])])
-#
-# p_market_plot = []
-# for i in range(0, len(p_market_vector)):
-#     p_market_plot.append([float(p_market_vector[i])])
-#
-# ret_on_sec_plot = []
-# for i in range(0, len(ret_sec_bank_vector)):
-#     ret_on_sec_plot.append([float(ret_sec_bank_vector[i])])
+rfree_plot = []
+for i in range(0, len(rfree_vector)):
+    rfree_plot.append([float(rfree_vector[i])])
+
+p_market_plot = []
+for i in range(0, len(p_market_vector)):
+    p_market_plot.append([float(p_market_vector[i])])
+
+
 
 every_thing_plot = []
 for i in range(0, len(every_thing_vector)):
