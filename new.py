@@ -16,6 +16,7 @@ ret_sec_shbank = 0.18
 rfree = 0.18
 rfree_min = 0.20
 rfree_max = 0.25
+
 rfree_vector = [f'{rfree}']
 
 intrinsic_value = 1
@@ -25,7 +26,6 @@ p_market_max = 1.50
 p_market_min = 0.80
 
 p_market_vector = [f'{p_market}']
-
 
 #################################################
 # variables for visualization
@@ -240,8 +240,11 @@ def redemption(www):
     p_change = www.int_value - p_market
     if p_change < 0:
         www.redemption = 0
+        www.ns_s_s = 0
+
     else:
         www.redemption = www.participation * (math.exp(etha * p_change) - 1)
+        www.ns_s = www.redemption
 
     if www.redemption < www.shadow_bank_cash:
         www.shadow_bank_cash = www.shadow_bank_cash - www.redemption
@@ -256,6 +259,9 @@ def redemption(www):
         www.participation = 0
         www.security = 0
         www.shadow_bank_cash = 0
+
+
+###
 
 
 ######################################################################################################
@@ -306,7 +312,7 @@ optimize_shadow_bank(shadow14)
 optimize_shadow_bank(shadow15)
 
 ################################################
-# equilibrium in interbank loan market
+# first equilibrium in interbank loan market
 
 demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks + bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks + bank_melal.borrow_from_banks
 supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks + bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks + bank_melal.lend_to_banks
@@ -332,7 +338,7 @@ else:
 # the name of bank which is source of the shock
 
 
-def bank_shock(www, sig):
+def bank_shock(www, sig=0):
     shock = sig * (www.deposits + www.borrow_from_banks)
     if shock <= www.bank_cash:
         www.equity = www.equity - shock
@@ -360,6 +366,36 @@ def bank_shock(www, sig):
 
 
 #################################
+
+bank_shock(bank_melli, sig=0.5)
+bank_shock(bank_seppah)
+bank_shock(bank_tosesaderat)
+bank_shock(bank_maskan)
+bank_shock(bank_sanatmadan)
+bank_shock(bank_keshavarzi)
+bank_shock(bank_tosetavon)
+bank_shock(bank_post)
+bank_shock(bank_eghtesadnovin)
+bank_shock(bank_parsian)
+bank_shock(bank_karafarin)
+bank_shock(bank_saman)
+bank_shock(bank_sina)
+bank_shock(bank_khavarmiane)
+bank_shock(bank_shahr)
+bank_shock(bank_dey)
+bank_shock(bank_saderat)
+bank_shock(bank_tejarat)
+bank_shock(bank_mellat)
+bank_shock(bank_refah)
+bank_shock(bank_ayandeh)
+bank_shock(bank_gardeshgary)
+bank_shock(bank_iranzamin)
+bank_shock(bank_sarmaye)
+bank_shock(bank_pasargad)
+bank_shock(bank_melal)
+
+
+#################################
 # demand of stock
 
 def demand_of_stock_shadow_bank(mmm):
@@ -371,14 +407,34 @@ def demand_of_stock_shadow_bank(mmm):
         mmm.security = mmm.security + mmm.nd_s
 
 
+total_demand_of_shadow = shadow1.nd_s + shadow2.nd_s + shadow3.nd_s + shadow4.nd_s + shadow5.nd_s + shadow6.nd_s + shadow7.nd_s + shadow8.nd_s + shadow9.nd_s + shadow10.nd_s + shadow11.nd_s + shadow12.nd_s + shadow13.nd_s + shadow14.nd_s + shadow15.nd_s
+
 #################################
 # supply of stock by shadow banks and banks
 
-# redemption
-# shock
+# from source of redemption
+total_supply_of_bank = bank_melli.ns_s + bank_seppah.ns_s + bank_tosesaderat.ns_s + bank_maskan.ns_s + bank_sanatmadan.ns_s + bank_keshavarzi.ns_s + bank_tosetavon.ns_s + bank_post.ns_s + bank_eghtesadnovin.ns_s + bank_parsian.ns_s + bank_karafarin.ns_s + bank_saman.ns_s + bank_saman.ns_s + bank_sina.ns_s + bank_khavarmiane.ns_s + bank_shahr.ns_s + bank_dey.ns_s + bank_saderat.ns_s + bank_tejarat.ns_s + bank_mellat.ns_s + bank_refah.ns_s + bank_ayandeh.ns_s + bank_gardeshgary.ns_s + bank_iranzamin.ns_s + bank_sarmaye.ns_s + bank_sarmaye.ns_s + bank_pasargad.ns_s + bank_melal.ns_s
 
+redemption(shadow1)
+redemption(shadow2)
+redemption(shadow3)
+redemption(shadow4)
+redemption(shadow5)
+redemption(shadow6)
+redemption(shadow7)
+redemption(shadow8)
+redemption(shadow9)
+redemption(shadow10)
+redemption(shadow11)
+redemption(shadow12)
+redemption(shadow13)
+redemption(shadow14)
+redemption(shadow15)
+
+total_supply_of_shadow = shadow1.ns_s + shadow2.ns_s + shadow3.ns_s + shadow4.ns_s + shadow5.ns_s + shadow6.ns_s + shadow7.ns_s + shadow8.ns_s + shadow9.ns_s + shadow10.ns_s + shadow11.ns_s + shadow12.ns_s + shadow13.ns_s + shadow14.ns_s + shadow15.ns_s
 #################################
 # equilibrium in capital market
+
 
 stock_supply_of_banks = bank_melli.supply_of_stock_b + bank_seppah.supply_of_stock_b + bank_tosesaderat.supply_of_stock_b + bank_maskan.supply_of_stock_b + bank_sanatmadan.supply_of_stock_b + bank_keshavarzi.supply_of_stock_b + bank_tosetavon.supply_of_stock_b + bank_post.supply_of_stock_b + bank_eghtesadnovin.supply_of_stock_b + bank_parsian.supply_of_stock_b + bank_karafarin.supply_of_stock_b + bank_saman.supply_of_stock_b + bank_saman.supply_of_stock_b + bank_sina.supply_of_stock_b + bank_khavarmiane.supply_of_stock_b + bank_shahr.supply_of_stock_b + bank_dey.supply_of_stock_b + bank_saderat.supply_of_stock_b + bank_tejarat.supply_of_stock_b + bank_mellat.supply_of_stock_b + bank_refah.supply_of_stock_b + bank_ayandeh.supply_of_stock_b + bank_gardeshgary.supply_of_stock_b + bank_iranzamin.supply_of_stock_b + bank_sarmaye.supply_of_stock_b + bank_sarmaye.supply_of_stock_b + bank_pasargad.supply_of_stock_b + bank_melal.supply_of_stock_b
 stock_demand_of_banks = bank_melli.demand_of_stock_b + bank_seppah.demand_of_stock_b + bank_tosesaderat.demand_of_stock_b + bank_maskan.demand_of_stock_b + bank_sanatmadan.demand_of_stock_b + bank_keshavarzi.demand_of_stock_b + bank_tosetavon.demand_of_stock_b + bank_post.demand_of_stock_b + bank_eghtesadnovin.demand_of_stock_b + bank_parsian.demand_of_stock_b + bank_karafarin.demand_of_stock_b + bank_saman.demand_of_stock_b + bank_saman.demand_of_stock_b + bank_sina.demand_of_stock_b + bank_khavarmiane.demand_of_stock_b + bank_shahr.demand_of_stock_b + bank_dey.demand_of_stock_b + bank_saderat.demand_of_stock_b + bank_tejarat.demand_of_stock_b + bank_mellat.demand_of_stock_b + bank_refah.demand_of_stock_b + bank_ayandeh.demand_of_stock_b + bank_gardeshgary.demand_of_stock_b + bank_iranzamin.demand_of_stock_b + bank_sarmaye.demand_of_stock_b + bank_sarmaye.demand_of_stock_b + bank_pasargad.demand_of_stock_b + bank_melal.demand_of_stock_b
@@ -391,21 +447,6 @@ total_stock_supply = stock_supply_of_shadow_banks
 # start the simulation
 ################
 
-    redemption(shadow1)
-    redemption(shadow2)
-    redemption(shadow3)
-    redemption(shadow4)
-    redemption(shadow5)
-    redemption(shadow6)
-    redemption(shadow7)
-    redemption(shadow8)
-    redemption(shadow9)
-    redemption(shadow10)
-    redemption(shadow11)
-    redemption(shadow12)
-    redemption(shadow13)
-    redemption(shadow14)
-    redemption(shadow15)
 for ttt in range(n_sim):
 
     # first banks
@@ -488,8 +529,8 @@ for ttt in range(n_sim):
     else:
         p_market = p_market
 
-    ret_on_sec = p_market / p_market_old - 1
-
+    ########################################################
+    # visualization
 
     every = total_stock_demand
     every_thing_vector.append(every)
@@ -507,8 +548,6 @@ for i in range(0, len(rfree_vector)):
 p_market_plot = []
 for i in range(0, len(p_market_vector)):
     p_market_plot.append([float(p_market_vector[i])])
-
-
 
 every_thing_plot = []
 for i in range(0, len(every_thing_vector)):
