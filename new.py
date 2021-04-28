@@ -104,7 +104,7 @@ class Shadow_Bank:
         self.security = security
         self.s_alpha = s_alpha
         self.s_provision = s_provision
-        self.int_value = np.random.normal(intrinsic_value)
+        self.int_value = np.random.normal(intrinsic_value, 0.2)
         self.redemption = 0
         self.stock = security / p_market
         self.ns_s = 0
@@ -343,10 +343,12 @@ def bank_shock(www, sig=0):
     if shock <= www.bank_cash:
         www.equity = www.equity - shock
         www.bank_cash = www.bank_cash - shock
+        www.ns = 0
     elif (www.bank_cash + www.lend_to_banks) >= shock >= www.bank_cash:
         www.equity = www.equity - www.bank_cash
         www.bank_cash = 0
         www.lend_to_banks = www.lend_to_banks - (shock - www.bank_cash)
+        www.ns = 0
     elif (www.bank_cash + www.lend_to_banks + www.bank_sec) >= shock >= (www.bank_cash + www.lend_to_banks):
         delta = www.bank_cash + www.lend_to_banks + www.bank_sec - shock
         www.bank_cash = 0
@@ -394,26 +396,14 @@ bank_shock(bank_sarmaye)
 bank_shock(bank_pasargad)
 bank_shock(bank_melal)
 
-
 #################################
-# demand of stock
 
-def demand_of_stock_shadow_bank(mmm):
-    if p_market > mmm.int_value:
-        mmm.nd_s = 0
-    else:
-        mmm.nd_s = mmm.shadow_bank_cash - mmm.redemption
-        mmm.shadow_bank_cash = mmm.shadow_bank_cash - mmm.nd_s
-        mmm.security = mmm.security + mmm.nd_s
-
-
-total_demand_of_shadow = shadow1.nd_s + shadow2.nd_s + shadow3.nd_s + shadow4.nd_s + shadow5.nd_s + shadow6.nd_s + shadow7.nd_s + shadow8.nd_s + shadow9.nd_s + shadow10.nd_s + shadow11.nd_s + shadow12.nd_s + shadow13.nd_s + shadow14.nd_s + shadow15.nd_s
 
 #################################
 # supply of stock by shadow banks and banks
 
 
-total_supply_of_bank = bank_melli.ns_s + bank_seppah.ns_s + bank_tosesaderat.ns_s + bank_maskan.ns_s + bank_sanatmadan.ns_s + bank_keshavarzi.ns_s + bank_tosetavon.ns_s + bank_post.ns_s + bank_eghtesadnovin.ns_s + bank_parsian.ns_s + bank_karafarin.ns_s + bank_saman.ns_s + bank_saman.ns_s + bank_sina.ns_s + bank_khavarmiane.ns_s + bank_shahr.ns_s + bank_dey.ns_s + bank_saderat.ns_s + bank_tejarat.ns_s + bank_mellat.ns_s + bank_refah.ns_s + bank_ayandeh.ns_s + bank_gardeshgary.ns_s + bank_iranzamin.ns_s + bank_sarmaye.ns_s + bank_sarmaye.ns_s + bank_pasargad.ns_s + bank_melal.ns_s
+total_supply_of_bank = bank_melli.ns + bank_seppah.ns + bank_tosesaderat.ns + bank_maskan.ns + bank_sanatmadan.ns + bank_keshavarzi.ns + bank_tosetavon.ns + bank_post.ns + bank_eghtesadnovin.ns + bank_parsian.ns + bank_karafarin.ns + bank_saman.ns + bank_saman.ns + bank_sina.ns + bank_khavarmiane.ns + bank_shahr.ns + bank_dey.ns + bank_saderat.ns + bank_tejarat.ns + bank_mellat.ns + bank_refah.ns + bank_ayandeh.ns + bank_gardeshgary.ns + bank_iranzamin.ns + bank_sarmaye.ns + bank_pasargad.ns + bank_melal.ns
 
 # from source of redemption
 
@@ -434,15 +424,48 @@ redemption(shadow14)
 redemption(shadow15)
 
 total_supply_of_shadow = shadow1.ns_s + shadow2.ns_s + shadow3.ns_s + shadow4.ns_s + shadow5.ns_s + shadow6.ns_s + shadow7.ns_s + shadow8.ns_s + shadow9.ns_s + shadow10.ns_s + shadow11.ns_s + shadow12.ns_s + shadow13.ns_s + shadow14.ns_s + shadow15.ns_s
+
+
+##########################################
+# demand of stock
+
+def demand_of_stock_shadow_bank(mmm):
+    if p_market > mmm.int_value:
+        mmm.nd_s = 0
+    elif mmm.shadow_bank_cash > mmm.ns_s:
+        mmm.nd_s = mmm.shadow_bank_cash - mmm.ns_s
+        mmm.shadow_bank_cash = mmm.shadow_bank_cash - mmm.nd_s
+        mmm.security = mmm.security + mmm.nd_s
+
+
+demand_of_stock_shadow_bank(shadow1)
+demand_of_stock_shadow_bank(shadow2)
+demand_of_stock_shadow_bank(shadow3)
+demand_of_stock_shadow_bank(shadow4)
+demand_of_stock_shadow_bank(shadow5)
+demand_of_stock_shadow_bank(shadow6)
+demand_of_stock_shadow_bank(shadow7)
+demand_of_stock_shadow_bank(shadow8)
+demand_of_stock_shadow_bank(shadow9)
+demand_of_stock_shadow_bank(shadow10)
+demand_of_stock_shadow_bank(shadow11)
+demand_of_stock_shadow_bank(shadow12)
+demand_of_stock_shadow_bank(shadow13)
+demand_of_stock_shadow_bank(shadow14)
+demand_of_stock_shadow_bank(shadow15)
+
+total_demand_of_shadow = shadow1.nd_s + shadow2.nd_s + shadow3.nd_s + shadow4.nd_s + shadow5.nd_s + shadow6.nd_s + shadow7.nd_s + shadow8.nd_s + shadow9.nd_s + shadow10.nd_s + shadow11.nd_s + shadow12.nd_s + shadow13.nd_s + shadow14.nd_s + shadow15.nd_s
+
 #################################
+
 # equilibrium in capital market
 total_supply_of_stock = total_supply_of_shadow + total_supply_of_bank
 total_demand_of_stock = total_demand_of_shadow
 
 print(total_demand_of_stock)
 print(total_supply_of_stock)
-
 ###############################################################
+# equilibrium in stock market
 
 ########################################################
 # visualization
