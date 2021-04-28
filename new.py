@@ -467,6 +467,83 @@ print(total_supply_of_stock)
 ###############################################################
 # equilibrium in stock market
 
+fff = abs(total_demand_of_stock - total_supply_of_stock)
+growth_price =
+if total_demand_of_stock > total_supply_of_stock:
+    p_market = p_market * (1 + growth_price)
+elif total_demand_of_stock < total_supply_of_stock:
+    p_market = p_market * (1 - growth_price)
+else:
+    p_market = p_market
+
+print(p_market)
+########################################################
+# second round optimization of banks and shadow banks
+
+optimize_bank(bank_melli)
+optimize_bank(bank_seppah)
+optimize_bank(bank_tosesaderat)
+optimize_bank(bank_maskan)
+optimize_bank(bank_sanatmadan)
+optimize_bank(bank_keshavarzi)
+optimize_bank(bank_tosetavon)
+optimize_bank(bank_post)
+optimize_bank(bank_eghtesadnovin)
+optimize_bank(bank_parsian)
+optimize_bank(bank_karafarin)
+optimize_bank(bank_saman)
+optimize_bank(bank_sina)
+optimize_bank(bank_khavarmiane)
+optimize_bank(bank_shahr)
+optimize_bank(bank_dey)
+optimize_bank(bank_saderat)
+optimize_bank(bank_tejarat)
+optimize_bank(bank_mellat)
+optimize_bank(bank_refah)
+optimize_bank(bank_ayandeh)
+optimize_bank(bank_gardeshgary)
+optimize_bank(bank_iranzamin)
+optimize_bank(bank_sarmaye)
+optimize_bank(bank_pasargad)
+optimize_bank(bank_melal)
+
+optimize_shadow_bank(shadow1)
+optimize_shadow_bank(shadow2)
+optimize_shadow_bank(shadow3)
+optimize_shadow_bank(shadow4)
+optimize_shadow_bank(shadow5)
+optimize_shadow_bank(shadow6)
+optimize_shadow_bank(shadow7)
+optimize_shadow_bank(shadow8)
+optimize_shadow_bank(shadow9)
+optimize_shadow_bank(shadow10)
+optimize_shadow_bank(shadow11)
+optimize_shadow_bank(shadow12)
+optimize_shadow_bank(shadow13)
+optimize_shadow_bank(shadow14)
+optimize_shadow_bank(shadow15)
+
+########################################################
+# first equilibrium in interbank loan market
+
+demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks + bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks + bank_melal.borrow_from_banks
+supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks + bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks + bank_melal.lend_to_banks
+difference = demand_of_banks - supply_of_banks
+
+if demand_of_banks > supply_of_banks:
+    # rrr = (demand_of_banks/supply_of_banks) - 1
+    # rfree = (1+rrr) * rfree
+    rfree = (rfree + rfree_max) / 2
+elif demand_of_banks < supply_of_banks:
+    # rrr = (supply_of_banks / demand_of_banks) - 1
+    # rfree = (1 - rrr) * rfree
+    rfree = (rfree + rfree_min) / 2
+else:
+    rfree = rfree
+
+    rfree_vector.append(rfree)
+
+
 ########################################################
 # visualization
 
@@ -478,14 +555,6 @@ every1_thing_vector.append(every1)
 
 every2 = p_market
 every2_thing_vector.append(every2)
-
-rfree_plot = []
-for i in range(0, len(rfree_vector)):
-    rfree_plot.append([float(rfree_vector[i])])
-
-p_market_plot = []
-for i in range(0, len(p_market_vector)):
-    p_market_plot.append([float(p_market_vector[i])])
 
 every_thing_plot = []
 for i in range(0, len(every_thing_vector)):
@@ -499,11 +568,8 @@ every2_thing_plot = []
 for i in range(0, len(every2_thing_vector)):
     every2_thing_plot.append([float(every2_thing_vector[i])])
 
-# print(ret_on_sec_plot)
-# print(p_market_plot)
 # print(rfree_plot)
 # print(every_thing_vector)
-
 
 # plt.plot(rfree_plot)
 # plt.show()
