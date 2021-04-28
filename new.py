@@ -412,8 +412,10 @@ total_demand_of_shadow = shadow1.nd_s + shadow2.nd_s + shadow3.nd_s + shadow4.nd
 #################################
 # supply of stock by shadow banks and banks
 
-# from source of redemption
+
 total_supply_of_bank = bank_melli.ns_s + bank_seppah.ns_s + bank_tosesaderat.ns_s + bank_maskan.ns_s + bank_sanatmadan.ns_s + bank_keshavarzi.ns_s + bank_tosetavon.ns_s + bank_post.ns_s + bank_eghtesadnovin.ns_s + bank_parsian.ns_s + bank_karafarin.ns_s + bank_saman.ns_s + bank_saman.ns_s + bank_sina.ns_s + bank_khavarmiane.ns_s + bank_shahr.ns_s + bank_dey.ns_s + bank_saderat.ns_s + bank_tejarat.ns_s + bank_mellat.ns_s + bank_refah.ns_s + bank_ayandeh.ns_s + bank_gardeshgary.ns_s + bank_iranzamin.ns_s + bank_sarmaye.ns_s + bank_sarmaye.ns_s + bank_pasargad.ns_s + bank_melal.ns_s
+
+# from source of redemption
 
 redemption(shadow1)
 redemption(shadow2)
@@ -434,112 +436,25 @@ redemption(shadow15)
 total_supply_of_shadow = shadow1.ns_s + shadow2.ns_s + shadow3.ns_s + shadow4.ns_s + shadow5.ns_s + shadow6.ns_s + shadow7.ns_s + shadow8.ns_s + shadow9.ns_s + shadow10.ns_s + shadow11.ns_s + shadow12.ns_s + shadow13.ns_s + shadow14.ns_s + shadow15.ns_s
 #################################
 # equilibrium in capital market
+total_supply_of_stock = total_supply_of_shadow + total_supply_of_bank
+total_demand_of_stock = total_demand_of_shadow
 
-
-stock_supply_of_banks = bank_melli.supply_of_stock_b + bank_seppah.supply_of_stock_b + bank_tosesaderat.supply_of_stock_b + bank_maskan.supply_of_stock_b + bank_sanatmadan.supply_of_stock_b + bank_keshavarzi.supply_of_stock_b + bank_tosetavon.supply_of_stock_b + bank_post.supply_of_stock_b + bank_eghtesadnovin.supply_of_stock_b + bank_parsian.supply_of_stock_b + bank_karafarin.supply_of_stock_b + bank_saman.supply_of_stock_b + bank_saman.supply_of_stock_b + bank_sina.supply_of_stock_b + bank_khavarmiane.supply_of_stock_b + bank_shahr.supply_of_stock_b + bank_dey.supply_of_stock_b + bank_saderat.supply_of_stock_b + bank_tejarat.supply_of_stock_b + bank_mellat.supply_of_stock_b + bank_refah.supply_of_stock_b + bank_ayandeh.supply_of_stock_b + bank_gardeshgary.supply_of_stock_b + bank_iranzamin.supply_of_stock_b + bank_sarmaye.supply_of_stock_b + bank_sarmaye.supply_of_stock_b + bank_pasargad.supply_of_stock_b + bank_melal.supply_of_stock_b
-stock_demand_of_banks = bank_melli.demand_of_stock_b + bank_seppah.demand_of_stock_b + bank_tosesaderat.demand_of_stock_b + bank_maskan.demand_of_stock_b + bank_sanatmadan.demand_of_stock_b + bank_keshavarzi.demand_of_stock_b + bank_tosetavon.demand_of_stock_b + bank_post.demand_of_stock_b + bank_eghtesadnovin.demand_of_stock_b + bank_parsian.demand_of_stock_b + bank_karafarin.demand_of_stock_b + bank_saman.demand_of_stock_b + bank_saman.demand_of_stock_b + bank_sina.demand_of_stock_b + bank_khavarmiane.demand_of_stock_b + bank_shahr.demand_of_stock_b + bank_dey.demand_of_stock_b + bank_saderat.demand_of_stock_b + bank_tejarat.demand_of_stock_b + bank_mellat.demand_of_stock_b + bank_refah.demand_of_stock_b + bank_ayandeh.demand_of_stock_b + bank_gardeshgary.demand_of_stock_b + bank_iranzamin.demand_of_stock_b + bank_sarmaye.demand_of_stock_b + bank_sarmaye.demand_of_stock_b + bank_pasargad.demand_of_stock_b + bank_melal.demand_of_stock_b
-stock_demand_of_shadow_banks = shadow1.demand_of_stock + shadow2.demand_of_stock + shadow3.demand_of_stock + shadow4.demand_of_stock + shadow5.demand_of_stock + shadow6.demand_of_stock + shadow7.demand_of_stock + shadow8.demand_of_stock + shadow9.demand_of_stock + shadow10.demand_of_stock + shadow11.demand_of_stock + shadow12.demand_of_stock + shadow13.demand_of_stock + shadow14.demand_of_stock + shadow15.demand_of_stock
-stock_supply_of_shadow_banks = shadow1.supply_of_stock + shadow2.supply_of_stock + shadow3.supply_of_stock + shadow4.supply_of_stock + shadow5.supply_of_stock + shadow6.supply_of_stock + shadow7.supply_of_stock + shadow8.supply_of_stock + shadow9.supply_of_stock + shadow10.supply_of_stock + shadow11.supply_of_stock + shadow12.supply_of_stock + shadow13.supply_of_stock + shadow14.supply_of_stock + shadow15.supply_of_stock
-total_stock_demand = stock_demand_of_shadow_banks
-total_stock_supply = stock_supply_of_shadow_banks
+print(total_demand_of_stock)
+print(total_supply_of_stock)
 
 ###############################################################
-# start the simulation
-################
 
-for ttt in range(n_sim):
+########################################################
+# visualization
 
-    # first banks
-    optimize_bank(bank_melli)
-    optimize_bank(bank_seppah)
-    optimize_bank(bank_tosesaderat)
-    optimize_bank(bank_maskan)
-    optimize_bank(bank_sanatmadan)
-    optimize_bank(bank_keshavarzi)
-    optimize_bank(bank_tosetavon)
-    optimize_bank(bank_post)
-    optimize_bank(bank_eghtesadnovin)
-    optimize_bank(bank_parsian)
-    optimize_bank(bank_karafarin)
-    optimize_bank(bank_saman)
-    optimize_bank(bank_sina)
-    optimize_bank(bank_khavarmiane)
-    optimize_bank(bank_shahr)
-    optimize_bank(bank_dey)
-    optimize_bank(bank_saderat)
-    optimize_bank(bank_tejarat)
-    optimize_bank(bank_mellat)
-    optimize_bank(bank_refah)
-    optimize_bank(bank_ayandeh)
-    optimize_bank(bank_gardeshgary)
-    optimize_bank(bank_iranzamin)
-    optimize_bank(bank_sarmaye)
-    optimize_bank(bank_pasargad)
-    optimize_bank(bank_melal)
+every = p_market_old
+every_thing_vector.append(every)
 
-    # second shadow banks determine the redemptions because it is almost a legal issue then they optimize which is a ecnomic behaviour
+every1 = p_market
+every1_thing_vector.append(every1)
 
-    redemption(shadow1)
-    redemption(shadow2)
-    redemption(shadow3)
-    redemption(shadow4)
-    redemption(shadow5)
-    redemption(shadow6)
-    redemption(shadow7)
-    redemption(shadow8)
-    redemption(shadow9)
-    redemption(shadow10)
-    redemption(shadow11)
-    redemption(shadow12)
-    redemption(shadow13)
-    redemption(shadow14)
-    redemption(shadow15)
-
-    ## optimization of shadow banks
-
-    optimize_shadow_bank(shadow1)
-    optimize_shadow_bank(shadow2)
-    optimize_shadow_bank(shadow3)
-    optimize_shadow_bank(shadow4)
-    optimize_shadow_bank(shadow5)
-    optimize_shadow_bank(shadow6)
-    optimize_shadow_bank(shadow7)
-    optimize_shadow_bank(shadow8)
-    optimize_shadow_bank(shadow9)
-    optimize_shadow_bank(shadow10)
-    optimize_shadow_bank(shadow11)
-    optimize_shadow_bank(shadow12)
-    optimize_shadow_bank(shadow13)
-    optimize_shadow_bank(shadow14)
-    optimize_shadow_bank(shadow15)
-
-    stock_supply_of_banks = bank_melli.supply_of_stock_b + bank_seppah.supply_of_stock_b + bank_tosesaderat.supply_of_stock_b + bank_maskan.supply_of_stock_b + bank_sanatmadan.supply_of_stock_b + bank_keshavarzi.supply_of_stock_b + bank_tosetavon.supply_of_stock_b + bank_post.supply_of_stock_b + bank_eghtesadnovin.supply_of_stock_b + bank_parsian.supply_of_stock_b + bank_karafarin.supply_of_stock_b + bank_saman.supply_of_stock_b + bank_saman.supply_of_stock_b + bank_sina.supply_of_stock_b + bank_khavarmiane.supply_of_stock_b + bank_shahr.supply_of_stock_b + bank_dey.supply_of_stock_b + bank_saderat.supply_of_stock_b + bank_tejarat.supply_of_stock_b + bank_mellat.supply_of_stock_b + bank_refah.supply_of_stock_b + bank_ayandeh.supply_of_stock_b + bank_gardeshgary.supply_of_stock_b + bank_iranzamin.supply_of_stock_b + bank_sarmaye.supply_of_stock_b + bank_sarmaye.supply_of_stock_b + bank_pasargad.supply_of_stock_b + bank_melal.supply_of_stock_b
-    stock_demand_of_banks = bank_melli.demand_of_stock_b + bank_seppah.demand_of_stock_b + bank_tosesaderat.demand_of_stock_b + bank_maskan.demand_of_stock_b + bank_sanatmadan.demand_of_stock_b + bank_keshavarzi.demand_of_stock_b + bank_tosetavon.demand_of_stock_b + bank_post.demand_of_stock_b + bank_eghtesadnovin.demand_of_stock_b + bank_parsian.demand_of_stock_b + bank_karafarin.demand_of_stock_b + bank_saman.demand_of_stock_b + bank_saman.demand_of_stock_b + bank_sina.demand_of_stock_b + bank_khavarmiane.demand_of_stock_b + bank_shahr.demand_of_stock_b + bank_dey.demand_of_stock_b + bank_saderat.demand_of_stock_b + bank_tejarat.demand_of_stock_b + bank_mellat.demand_of_stock_b + bank_refah.demand_of_stock_b + bank_ayandeh.demand_of_stock_b + bank_gardeshgary.demand_of_stock_b + bank_iranzamin.demand_of_stock_b + bank_sarmaye.demand_of_stock_b + bank_sarmaye.demand_of_stock_b + bank_pasargad.demand_of_stock_b + bank_melal.demand_of_stock_b
-    stock_demand_of_shadow_banks = shadow1.demand_of_stock + shadow2.demand_of_stock + shadow3.demand_of_stock + shadow4.demand_of_stock + shadow5.demand_of_stock + shadow6.demand_of_stock + shadow7.demand_of_stock + shadow8.demand_of_stock + shadow9.demand_of_stock + shadow10.demand_of_stock + shadow11.demand_of_stock + shadow12.demand_of_stock + shadow13.demand_of_stock + shadow14.demand_of_stock + shadow15.demand_of_stock
-    stock_supply_of_shadow_banks = shadow1.supply_of_stock + shadow2.supply_of_stock + shadow3.supply_of_stock + shadow4.supply_of_stock + shadow5.supply_of_stock + shadow6.supply_of_stock + shadow7.supply_of_stock + shadow8.supply_of_stock + shadow9.supply_of_stock + shadow10.supply_of_stock + shadow11.supply_of_stock + shadow12.supply_of_stock + shadow13.supply_of_stock + shadow14.supply_of_stock + shadow15.supply_of_stock
-    total_stock_demand = stock_demand_of_banks + stock_demand_of_shadow_banks
-    total_stock_supply = stock_supply_of_banks + stock_supply_of_shadow_banks
-
-    p_market_old = p_market
-
-    if total_stock_demand > total_stock_supply:
-        p_market = (p_market + p_market_max) / 2
-    elif demand_of_banks < supply_of_banks:
-        p_market = (p_market + p_market_min) / 2
-    else:
-        p_market = p_market
-
-    ########################################################
-    # visualization
-
-    every = total_stock_demand
-    every_thing_vector.append(every)
-
-    every1 = total_stock_supply
-    every1_thing_vector.append(every1)
-
-    every2 = p_market
-    every2_thing_vector.append(every2)
+every2 = p_market
+every2_thing_vector.append(every2)
 
 rfree_plot = []
 for i in range(0, len(rfree_vector)):
@@ -574,9 +489,9 @@ for i in range(0, len(every2_thing_vector)):
 # plt.plot(ret_on_sec_plot)
 # plt.show()
 
-print(every_thing_plot)
-print(every1_thing_plot)
-print(every2_thing_plot)
+# print(every_thing_plot)
+# print(every1_thing_plot)
+# print(every2_thing_plot)
 # plt.plot(every_thing_plot)
 # plt.plot(every1_thing_plot)
 # plt.show()
