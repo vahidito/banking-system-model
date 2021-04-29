@@ -439,12 +439,11 @@ for i in range(0, len(every2_thing_vector)):
 # plt.plot(ret_on_sec_plot)
 # plt.show()
 
-print(every_thing_plot)
-print(every1_thing_plot)
-print(every2_thing_plot)
-# plt.plot(every_thing_plot)
-# plt.plot(every1_thing_plot)
-# plt.show()
+plt.plot(every_thing_plot)
+plt.plot(every1_thing_plot)
+plt.plot(every2_thing_plot)
+
+plt.show()
 #
 # plt.plot(every2_thing_plot)
 # plt.show()
@@ -452,3 +451,4 @@ print(every2_thing_plot)
 
 # print(every_thing_plot)
 # print(every1_thing_plot)
+# print(every2_thing_plot)

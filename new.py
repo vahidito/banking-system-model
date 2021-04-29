@@ -6,13 +6,13 @@ from scipy.optimize import linprog
 import math
 
 ################################################
-# global variables
+# global variables and initialization
 
-n_sim = 30
-etha = 1
-ret_sec_bank = 0.18
+n_sim = 25
+etha = 0.8
+ret_sec_bank = 0.5
 ret_sec_bank_sigma = 0.03
-ret_sec_shbank = 0.18
+ret_sec_shbank = 0.5
 rfree = 0.18
 rfree_min = 0.15
 rfree_max = 0.25
@@ -30,18 +30,22 @@ p_market_vector = [f'{p_market}']
 #################################################
 # variables for visualization
 
-every = 0
+every = p_market
 every_thing_vector = [f'{every}']
 
 every1 = 0
 every1_thing_vector = [f'{every1}']
 
-every2 = rfree
+every2 = 0
 every2_thing_vector = [f'{every2}']
+
+every3 = intrinsic_value
+every3_thing_vector = [f'{every3}']
 
 
 #################################################
 # defining the agents: banks, shadow banks
+# we made two class of agents
 
 
 class Bank:
@@ -89,6 +93,7 @@ class Bank:
         # self.pd = float(norm.ppf((-self.net_income - self.equity) / (self.sigma)))
         self.pd = np.random.beta(1, 20)
         self.etha_max = etha_max
+        self.sig = 0
 
 
 class Shadow_Bank:
@@ -104,44 +109,56 @@ class Shadow_Bank:
         self.security = security
         self.s_alpha = s_alpha
         self.s_provision = s_provision
-        self.int_value = np.random.normal(intrinsic_value, 0.1)
+        self.int_value = np.random.normal(intrinsic_value, 0.01)
         self.redemption = 0
 
         self.ns_s = 0
         self.nd_s = 0
 
 
-###############################################################
-# introduction of Iranian Banks
+#################################################
+# making vectors for sensitive analysis
 
-bank_melli = Bank(2.9, 22.9, 66.3, 33.5, 102.3, 20.2, 3.2, 0.1, 0.1, 0.1, 0.4, 0.07, 0.05, 0.05, 0.05, 1)
-bank_seppah = Bank(0.8, 6, 17.4, 8.8, 14.7, 6.3, 12.1, 0.1, 0.1, 0.1, 0.4, 0.07, 0.05, 0.05, 0.05, 1)
-bank_tosesaderat = Bank(8.3, 3.2, 22.8, 21.5, 5.7, 8.2, 42, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_maskan = Bank(3.4, 0, 54.2, 9.3, 6.9, 9.8, 50.3, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_sanatmadan = Bank(6.7, 0, 106, 18.3, 8.9, 42.7, 79.3, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_keshavarzi = Bank(25.3, 3.2, 88, 47.4, 33.6, 2.1, 128.2, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_tosetavon = Bank(1.3, 0.2, 16.9, 4.4, 5.6, 2.3, 14.8, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_post = Bank(0.6, 4.4, 11.1, 1.3, 13.3, 4, 0.1, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_eghtesadnovin = Bank(4, 6.2, 44, 10.9, 51.1, 7.3, 6.7, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_parsian = Bank(9.5, 27.6, 94.6, 26.4, 33.3, 11.3, 113.5, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_karafarin = Bank(4.8, 7.5, 52.8, 13, 61.3, 8.7, 8.1, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_saman = Bank(0.5, 14.1, 22.6, 18, 46.3, 4.9, 4, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_sina = Bank(2, 2.6, 16, 3.8, 21.6, 0.2, 2.6, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_khavarmiane = Bank(0.2, 5.2, 11.8, 4, 12.7, 5.3, 3.2, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_shahr = Bank(0.8, 9.9, 43.7, 21.4, 85.8, 5.1, -15.1, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_dey = Bank(1, 3.2, 8.2, 15.1, 27.8, 8.4, -8.7, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_saderat = Bank(16.3, 45.5, 204.3, 60.4, 231.3, 41.6, 53.6, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_tejarat = Bank(13.1, 46.4, 133.8, 51.6, 197.6, 22.3, 25, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_mellat = Bank(21.2, 50.8, 311.3, 68.4, 269.6, 127.1, 55, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_refah = Bank(2.4, 3.1, 19.1, 4.5, 25.9, 0.2, 3.1, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_ayandeh = Bank(1.5, 21.8, 97.6, 79.3, 186.1, 22.8, -8.7, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_gardeshgary = Bank(1, 0.2, 19.8, 29.7, 38.4, 8.4, 3.8, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_iranzamin = Bank(0.3, 4.1, 3.5, 29.2, 33.6, 6.1, -2.6, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_sarmaye = Bank(0.5, 2.7, 5.4, 5.4, 18.3, 21.7, -26.1, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 0)
-bank_pasargad = Bank(18.7, 21.6, 79.9, 45.8, 116.9, 19.3, 29.9, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
-bank_melal = Bank(0.2, 2.3, 10.8, 21.1, 15.2, 15, 4, 0.1, 0.1, 0.1, 0.1, 0.07, 0.05, 0.05, 0.05, 1)
+alpha_vector = [0.08, 0.1, 0.12]
+car_vector = [0.06, 0.07, 0.08]
+ind_alpha = 2
+ind_car = 0
+alpha = alpha_vector[ind_alpha]
+car = car_vector[ind_car]
+###############################################################
+
+# introduction of Iranian Banks
+# using financial statements in codal website to initial the banks
+
+bank_melli = Bank(2.9, 22.9, 66.3, 33.5, 102.3, 20.2, 3.2, alpha, 0.1, 0.1, 0.4, car, 0.05, 0.05, 0.05, 1)
+bank_seppah = Bank(0.8, 6, 17.4, 8.8, 14.7, 6.3, 12.1, alpha, 0.1, 0.1, 0.4, car, 0.05, 0.05, 0.05, 1)
+bank_tosesaderat = Bank(8.3, 3.2, 22.8, 21.5, 5.7, 8.2, 42, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_maskan = Bank(3.4, 0, 54.2, 9.3, 6.9, 9.8, 50.3, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_sanatmadan = Bank(6.7, 0, 106, 18.3, 8.9, 42.7, 79.3, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_keshavarzi = Bank(25.3, 3.2, 88, 47.4, 33.6, 2.1, 128.2, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_tosetavon = Bank(1.3, 0.2, 16.9, 4.4, 5.6, 2.3, 14.8, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_post = Bank(0.6, 4.4, 11.1, 1.3, 13.3, 4, 0.1, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_eghtesadnovin = Bank(4, 6.2, 44, 10.9, 51.1, 7.3, 6.7, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_parsian = Bank(9.5, 27.6, 94.6, 26.4, 33.3, 11.3, 113.5, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_karafarin = Bank(4.8, 7.5, 52.8, 13, 61.3, 8.7, 8.1, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_saman = Bank(0.5, 14.1, 22.6, 18, 46.3, 4.9, 4, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_sina = Bank(2, 2.6, 16, 3.8, 21.6, 0.2, 2.6, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_khavarmiane = Bank(0.2, 5.2, 11.8, 4, 12.7, 5.3, 3.2, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_shahr = Bank(0.8, 9.9, 43.7, 21.4, 85.8, 5.1, -15.1, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_dey = Bank(1, 3.2, 8.2, 15.1, 27.8, 8.4, -8.7, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_saderat = Bank(16.3, 45.5, 204.3, 60.4, 231.3, 41.6, 53.6, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_tejarat = Bank(13.1, 46.4, 133.8, 51.6, 197.6, 22.3, 25, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_mellat = Bank(21.2, 50.8, 311.3, 68.4, 269.6, 127.1, 55, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_refah = Bank(2.4, 3.1, 19.1, 4.5, 25.9, 0.2, 3.1, 0.1, alpha, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_ayandeh = Bank(1.5, 21.8, 97.6, 79.3, 186.1, 22.8, -8.7, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_gardeshgary = Bank(1, 0.2, 19.8, 29.7, 38.4, 8.4, 3.8, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_iranzamin = Bank(0.3, 4.1, 3.5, 29.2, 33.6, 6.1, -2.6, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_sarmaye = Bank(0.5, 2.7, 5.4, 5.4, 18.3, 21.7, -26.1, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 0)
+bank_pasargad = Bank(18.7, 21.6, 79.9, 45.8, 116.9, 19.3, 29.9, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
+bank_melal = Bank(0.2, 2.3, 10.8, 21.1, 15.2, 15, 4, alpha, 0.1, 0.1, 0.1, car, 0.05, 0.05, 0.05, 1)
 
 # introduction of Iranian Shadow Banks
+# this introduction is randomly
 
 shadow1 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.01, 0.01)
 shadow2 = Shadow_Bank(np.random.normal(45, 1), np.random.normal(3.5), np.random.normal(41.5), 0.3, 0.3)
@@ -263,75 +280,8 @@ def redemption(www):
 
 ###
 
-
 ######################################################################################################
-# first optimization of banks before shock
-################################################################
-
-optimize_bank(bank_melli)
-optimize_bank(bank_seppah)
-optimize_bank(bank_tosesaderat)
-optimize_bank(bank_maskan)
-optimize_bank(bank_sanatmadan)
-optimize_bank(bank_keshavarzi)
-optimize_bank(bank_tosetavon)
-optimize_bank(bank_post)
-optimize_bank(bank_eghtesadnovin)
-optimize_bank(bank_parsian)
-optimize_bank(bank_karafarin)
-optimize_bank(bank_saman)
-optimize_bank(bank_sina)
-optimize_bank(bank_khavarmiane)
-optimize_bank(bank_shahr)
-optimize_bank(bank_dey)
-optimize_bank(bank_saderat)
-optimize_bank(bank_tejarat)
-optimize_bank(bank_mellat)
-optimize_bank(bank_refah)
-optimize_bank(bank_ayandeh)
-optimize_bank(bank_gardeshgary)
-optimize_bank(bank_iranzamin)
-optimize_bank(bank_sarmaye)
-optimize_bank(bank_pasargad)
-optimize_bank(bank_melal)
-
-optimize_shadow_bank(shadow1)
-optimize_shadow_bank(shadow2)
-optimize_shadow_bank(shadow3)
-optimize_shadow_bank(shadow4)
-optimize_shadow_bank(shadow5)
-optimize_shadow_bank(shadow6)
-optimize_shadow_bank(shadow7)
-optimize_shadow_bank(shadow8)
-optimize_shadow_bank(shadow9)
-optimize_shadow_bank(shadow10)
-optimize_shadow_bank(shadow11)
-optimize_shadow_bank(shadow12)
-optimize_shadow_bank(shadow13)
-optimize_shadow_bank(shadow14)
-optimize_shadow_bank(shadow15)
-
-################################################
-# first equilibrium in interbank loan market
-
-demand_of_banks = bank_melli.borrow_from_banks + bank_seppah.borrow_from_banks + bank_tosesaderat.borrow_from_banks + bank_maskan.borrow_from_banks + bank_sanatmadan.borrow_from_banks + bank_keshavarzi.borrow_from_banks + bank_tosetavon.borrow_from_banks + bank_post.borrow_from_banks + bank_eghtesadnovin.borrow_from_banks + bank_parsian.borrow_from_banks + bank_karafarin.borrow_from_banks + bank_saman.borrow_from_banks + bank_saman.borrow_from_banks + bank_sina.borrow_from_banks + bank_khavarmiane.borrow_from_banks + bank_shahr.borrow_from_banks + bank_dey.borrow_from_banks + bank_saderat.borrow_from_banks + bank_tejarat.borrow_from_banks + bank_mellat.borrow_from_banks + bank_refah.borrow_from_banks + bank_ayandeh.borrow_from_banks + bank_gardeshgary.borrow_from_banks + bank_iranzamin.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_sarmaye.borrow_from_banks + bank_pasargad.borrow_from_banks + bank_melal.borrow_from_banks
-supply_of_banks = bank_melli.lend_to_banks + bank_seppah.lend_to_banks + bank_tosesaderat.lend_to_banks + bank_maskan.lend_to_banks + bank_sanatmadan.lend_to_banks + bank_keshavarzi.lend_to_banks + bank_tosetavon.lend_to_banks + bank_post.lend_to_banks + bank_eghtesadnovin.lend_to_banks + bank_parsian.lend_to_banks + bank_karafarin.lend_to_banks + bank_saman.lend_to_banks + bank_saman.lend_to_banks + bank_sina.lend_to_banks + bank_khavarmiane.lend_to_banks + bank_shahr.lend_to_banks + bank_dey.lend_to_banks + bank_saderat.lend_to_banks + bank_tejarat.lend_to_banks + bank_mellat.lend_to_banks + bank_refah.lend_to_banks + bank_ayandeh.lend_to_banks + bank_gardeshgary.lend_to_banks + bank_iranzamin.lend_to_banks + bank_sarmaye.lend_to_banks + bank_sarmaye.lend_to_banks + bank_pasargad.lend_to_banks + bank_melal.lend_to_banks
-difference = demand_of_banks - supply_of_banks
-
-if demand_of_banks > supply_of_banks:
-    # rrr = (demand_of_banks/supply_of_banks) - 1
-    # rfree = (1+rrr) * rfree
-    rfree = (rfree + rfree_max) / 2
-elif demand_of_banks < supply_of_banks:
-    # rrr = (supply_of_banks / demand_of_banks) - 1
-    # rfree = (1 - rrr) * rfree
-    rfree = (rfree + rfree_min) / 2
-else:
-    rfree = rfree
-
-    rfree_vector.append(rfree)
-
-
+###############################################################
 ###############################################################
 # determine the quantity of loan and security
 # which must be released in case of hitting shock
@@ -369,7 +319,7 @@ def bank_shock(www, sig=0):
 
 #################################
 
-bank_shock(bank_melli, sig=0.5)
+bank_shock(bank_melli, 0.5)
 bank_shock(bank_seppah)
 bank_shock(bank_tosesaderat)
 bank_shock(bank_maskan)
@@ -387,7 +337,7 @@ bank_shock(bank_shahr)
 bank_shock(bank_dey)
 bank_shock(bank_saderat)
 bank_shock(bank_tejarat)
-bank_shock(bank_mellat)
+bank_shock(bank_mellat, 0.1)
 bank_shock(bank_refah)
 bank_shock(bank_ayandeh)
 bank_shock(bank_gardeshgary)
@@ -460,8 +410,8 @@ for i in range(n_sim):
     def demand_of_stock_bank(mmm):
         if p_market > mmm.init_value_stock:
             mmm.nd = 0
-        elif p_market < mmm.init_value_stock and mmm.bank_cash > 0:
-            mmm.nd = (1 - mmm.alpha_min - mmm.etha_max) * mmm.bank_cash
+        elif p_market < mmm.init_value_stock and mmm.bank_cash > 0 and mmm.sig == 0:
+            mmm.nd = (1 - mmm.alpha_min - mmm.car) * mmm.bank_cash
 
 
     demand_of_stock_bank(bank_melli)
@@ -497,16 +447,15 @@ for i in range(n_sim):
 
     # equilibrium in capital market
     total_supply_of_stock = total_supply_of_shadow + total_supply_of_bank
-    total_demand_of_stock = total_demand_of_shadow + total_demand_of_bank
-
+    total_demand_of_stock = total_demand_of_shadow
     distance = total_supply_of_stock - total_demand_of_stock
 
     # print(total_demand_of_stock)
     # print(total_supply_of_stock)
-    ###############################################################
-    # equilibrium in stock market
-    # growth_of_price = abs(total_demand_of_stock - total_supply_of_stock) / max(total_supply_of_stock,total_demand_of_stock)
-    growth_of_price = 0.05
+
+    minus = abs(total_demand_of_stock - total_supply_of_stock) / (total_supply_of_stock + total_demand_of_stock)
+    growth_of_price = 0.05 * minus
+
     if total_demand_of_stock > total_supply_of_stock:
 
         p_market = p_market * (1 + growth_of_price)
@@ -520,8 +469,6 @@ for i in range(n_sim):
     # print(p_market)
 
     ########################################################
-    # second round optimization of banks and shadow banks
-
     optimize_bank(bank_melli)
     optimize_bank(bank_seppah)
     optimize_bank(bank_tosesaderat)
@@ -564,7 +511,6 @@ for i in range(n_sim):
     optimize_shadow_bank(shadow13)
     optimize_shadow_bank(shadow14)
     optimize_shadow_bank(shadow15)
-
     ########################################################
     # equilibrium in interbank loan market
 
@@ -588,14 +534,17 @@ for i in range(n_sim):
     ########################################################
     # visualization
 
-    every = demand_of_banks
+    every = p_market
     every_thing_vector.append(every)
 
-    every1 = supply_of_banks
+    every1 = total_supply_of_stock
     every1_thing_vector.append(every1)
 
-    every2 = rfree
+    every2 = total_demand_of_stock
     every2_thing_vector.append(every2)
+
+    every3 = intrinsic_value
+    every3_thing_vector.append(every3)
 
 every_thing_plot = []
 for i in range(0, len(every_thing_vector)):
@@ -609,26 +558,36 @@ every2_thing_plot = []
 for i in range(0, len(every2_thing_vector)):
     every2_thing_plot.append([float(every2_thing_vector[i])])
 
+every3_thing_plot = []
+for i in range(0, len(every3_thing_vector)):
+    every3_thing_plot.append([float(every3_thing_vector[i])])
+
 # print(rfree_plot)
-
-print(every_thing_plot)
-print(every1_thing_plot)
-print(every2_thing_plot)
-
-# plt.plot(rfree_plot)
-# plt.show()
-# plt.plot(p_market_plot)
-# plt.show()
-# plt.plot(ret_on_sec_plot)
-# plt.show()
 
 # print(every_thing_plot)
 # print(every1_thing_plot)
 # print(every2_thing_plot)
-plt.plot(every_thing_plot)
-# plt.show()
-plt.plot(every1_thing_plot)
+
+
+# plt.plot(every_thing_plot)
+plt.plot(every1_thing_plot, 'b+-')
+plt.plot(every2_thing_plot, 'ro-')
+plt.legend(labels=('Supply', 'Demand'), loc='upper right')
+
+sringe = f'minimum liquidity ratio = {alpha_vector[ind_alpha]} \n CAR = {car_vector[ind_car]}'
+plt.figtext(0.5, 0.9,
+            sringe,
+            horizontalalignment="center",
+            wrap=True, fontsize=10,
+            bbox={'facecolor': 'grey',
+                  'alpha': 0.3, 'pad': 5})
+plt.xlabel("time")
+plt.ylabel("Supply and Demand of Securities")
 plt.show()
-# #
-plt.plot(every2_thing_plot)
+
+plt.plot(every_thing_plot, 'ro-')
+plt.plot(every3_thing_plot, 'b--')
+plt.xlabel("time")
+plt.ylabel("Price in Capital Market")
+plt.legend(labels=('Price', 'Intrinsic Value'), loc='lower left')
 plt.show()
