@@ -8,7 +8,7 @@ import math
 ################################################
 # global variables and initialization
 
-n_sim = 25
+n_sim = 50
 etha = 0.8
 ret_sec_bank = 0.18
 ret_sec_bank_sigma = 0.03
@@ -126,7 +126,7 @@ class Shadow_Bank:
 alpha_vector = [0.08, 0.1, 0.12]
 car_vector = [0.06, 0.07, 0.08]
 ind_alpha = 2
-ind_car = 0
+ind_car = 2
 alpha = alpha_vector[ind_alpha]
 car = car_vector[ind_car]
 etha_max_bank = 0.2
@@ -339,7 +339,7 @@ def bank_shock(www, sig=0):
 
 #################################
 
-bank_shock(bank_melli, 0)
+bank_shock(bank_melli, 0.2)
 bank_shock(bank_seppah)
 bank_shock(bank_tosesaderat)
 bank_shock(bank_maskan)
@@ -431,7 +431,7 @@ for i in range(n_sim):
         if p_market > mmm.init_value_stock:
             mmm.nd = 0
         elif p_market < mmm.init_value_stock and mmm.bank_cash > 0 and mmm.sig == 0:
-            mmm.nd = ( (mmm.alpha_min + mmm.car)) * mmm.bank_cash
+            mmm.nd = ((mmm.alpha_min + mmm.car)) * mmm.bank_cash
 
 
     demand_of_stock_bank(bank_melli)
@@ -682,9 +682,9 @@ plt.show()
 
 #####################################################################
 # type of banks
-# for i in all_banks:
-#     print(i.ns)
-for i in all_shadow_banks:
-    print(i.ns_s)
-    print(i.nd_s)
+for i in all_banks:
+    print(i.bankrupt)
+# for i in all_shadow_banks:
+#     print(i.exit)
+
 #####################################################################
